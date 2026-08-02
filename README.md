@@ -1,8 +1,8 @@
-# Saporium App
+# Saporium
 
 A fully offline, private, personal recipe book for your phone.
 
-Saporium App lets you keep your own recipes on your own device. No accounts, no cloud, no
+Saporium lets you keep your own recipes on your own device. No accounts, no cloud, no
 tracking — the app works entirely offline and collects zero data. Your recipes are yours:
 everything is exportable to [schema.org/Recipe](https://schema.org/Recipe) JSON, an open
 format readable by other recipe managers.
