@@ -1,6 +1,9 @@
 # Dependencies
 node_modules/
 
+# Local-only reference material copied from the web repo (never committed)
+docs/inherited/
+
 # Expo
 .expo/
 dist/

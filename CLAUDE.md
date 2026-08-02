@@ -63,17 +63,18 @@ less data, less network.
 
 ## Inherited material (from the web repo)
 
-`docs/inherited/` holds files copied from the web repo (`dionivillos/saporium`, private but
-readable via the owner's authenticated `gh`). They are **reference material to adapt, not
-drop-in code** — move the adapted versions into `src/` during F0 and keep the originals in
-place as record:
+The web repo (`dionivillos/saporium`) is private; it is cloned locally at
+`/Users/dionivillos/workdir/Saporium` and readable via the owner's authenticated `gh`.
+A few of its files are copied into `docs/inherited/` **on the owner's machine only** —
+that directory is gitignored on purpose and must never be committed. They are **reference
+material to adapt, not drop-in code**; adapted versions go into `src/` during F0:
 
-| File | Use |
+| File (source in the web repo) | Use |
 |---|---|
-| `schema.ts` | Postgres schema → translate to sqlite-core with the simplifications above. |
-| `recipe.ts`, `common.ts` | Zod validation → relax requiredness per the form spec, drop `visibility`. |
-| `schema-org.ts` | Export to schema.org JSON-LD → near-literal reuse. The reverse mapping (JSON-LD → our model) must be written; it is shared by JSON import and URL import. |
-| `es.json` | Starting point for i18n messages → cut everything web-only (auth, social nav, admin). |
+| `src/lib/db/schema.ts` | Postgres schema → translate to sqlite-core with the simplifications above. |
+| `src/lib/validations/recipe.ts`, `common.ts` | Zod validation → relax requiredness per the form spec, drop `visibility`. |
+| `src/lib/utils/schema-org.ts` | Export to schema.org JSON-LD → near-literal reuse. The reverse mapping (JSON-LD → our model) must be written; it is shared by JSON import and URL import. |
+| `src/i18n/messages/es.json` | Starting point for i18n messages → cut everything web-only (auth, social nav, admin). |
 | `test-utils.tsx` | Next.js-specific; rewrite for React Native Testing Library. Little reuse value. |
 
 Web repo issues #31 (URL import), #33 (card UI), #34 (paste text → AI), #35 (lightweight
