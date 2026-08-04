@@ -1,14 +1,17 @@
 // https://docs.expo.dev/guides/using-eslint/
+const typescriptPlugin = require('@typescript-eslint/eslint-plugin');
+const eslintConfigPrettier = require('eslint-config-prettier');
 const expoConfig = require('eslint-config-expo/flat');
-const prettierConfig = require('eslint-config-prettier');
 
 module.exports = [
   ...expoConfig,
-  prettierConfig,
+  eslintConfigPrettier,
   {
-    ignores: ['dist/*', '.expo/*', 'coverage/*', 'docs/local/*'],
+    ignores: ['dist/*', '.expo/*', 'coverage/*', 'docs/local/*', 'src/db/migrations/*'],
   },
   {
+    files: ['**/*.ts', '**/*.tsx'],
+    plugins: { '@typescript-eslint': typescriptPlugin },
     rules: {
       // CLAUDE.md: TypeScript strict, no `any`.
       '@typescript-eslint/no-explicit-any': 'error',
