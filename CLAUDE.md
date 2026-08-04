@@ -117,12 +117,19 @@ Commands: `npm start` (dev server), `npm run ios`, `npm run typecheck`, `npm run
 must all pass. `npx expo-doctor` should stay at 20/20; `npx expo export --platform ios`
 verifies the bundle builds without needing Xcode.
 
+The app runs as a **development build**, not in Expo Go (the iOS Expo Go on the App Store
+is frozen at an older SDK). `npm run ios` prebuilds the native project, compiles it and
+launches it in the simulator; after that `npm start` alone is enough, since the installed
+build connects to Metro. `ios/` and `android/` are generated and gitignored — never edit
+them by hand; change `app.json` and let prebuild regenerate.
+
 Notes for agents:
 
-- **You cannot see the app.** There is no way for an agent to visually verify a screen
-  here. Verify with Jest + React Native Testing Library and `expo export`, and ask the
-  owner to look at the real app when visual confirmation matters. Never claim a screen
-  was checked visually.
+- **Verify UI work visually when a simulator is available.** With the app running:
+  `xcrun simctl io booted screenshot <path>` captures the screen and the PNG can be read
+  back. `xcrun simctl ui booted appearance dark|light` checks both themes without a
+  rebuild. Do this for anything that changes what the user sees. If no simulator is
+  available, say so plainly — never claim a screen was checked visually when it wasn't.
 - i18n keys are type-checked against `src/i18n/messages/es.json` (see `i18next.d.ts`), so a
   typo in `t('…')` fails `npm run typecheck`. Plurals use i18next's `_one` / `_other`
   suffixes, not ICU syntax.
