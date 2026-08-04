@@ -1,0 +1,12 @@
+node_modules/
+.expo/
+dist/
+coverage/
+ios/
+android/
+docs/local/
+package-lock.json
+
+# Markdown is hand-formatted (Prettier blows up the decision tables in CLAUDE.md)
+*.md
+

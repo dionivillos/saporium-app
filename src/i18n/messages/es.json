@@ -1,0 +1,94 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "saving": "Guardando...",
+    "error": "Ha ocurrido un error",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "back": "Volver",
+    "search": "Buscar",
+    "confirm": "Confirmar",
+    "close": "Cerrar",
+    "minutes": "{{value}} min",
+    "servings_one": "{{count}} ración",
+    "servings_other": "{{count}} raciones"
+  },
+  "recipes": {
+    "title": "Mis recetas",
+    "count_one": "{{count}} receta",
+    "count_other": "{{count}} recetas",
+    "empty": "Aún no tienes recetas",
+    "emptyDescription": "Crea tu primera receta y empieza a construir tu libro de cocina personal.",
+    "emptyAction": "Crear primera receta",
+    "new": "Nueva receta",
+    "edit": "Editar receta",
+    "form": {
+      "title": "Título",
+      "titlePlaceholder": "Ej. Paella valenciana",
+      "titleRequired": "El título es obligatorio",
+      "description": "Descripción",
+      "descriptionPlaceholder": "Una descripción breve de la receta...",
+      "difficulty": "Dificultad",
+      "difficultyEasy": "Fácil",
+      "difficultyMedium": "Media",
+      "difficultyHard": "Difícil",
+      "prepTime": "Preparación (min)",
+      "cookTime": "Cocción (min)",
+      "servingsMin": "Raciones (mín.)",
+      "servingsMax": "Raciones (máx.)",
+      "ingredients": "Ingredientes",
+      "ingredientsPlaceholder": "Un ingrediente por línea",
+      "ingredientsRequired": "Añade al menos un ingrediente",
+      "steps": "Pasos",
+      "stepsPlaceholder": "Un paso por línea",
+      "stepsRequired": "Añade al menos un paso",
+      "tags": "Tags",
+      "tagsHint": "Máximo 10.",
+      "tips": "Consejos",
+      "tipsPlaceholder": "Trucos y consejos para que salga perfecto...",
+      "coverImage": "Foto de portada",
+      "moreDetails": "Más detalles",
+      "submit": "Guardar receta",
+      "submitEdit": "Actualizar receta"
+    },
+    "detail": {
+      "prepTime": "Preparación",
+      "cookTime": "Cocción",
+      "totalTime": "Total",
+      "servings": "Raciones",
+      "difficulty": "Dificultad",
+      "ingredients": "Ingredientes",
+      "steps": "Elaboración",
+      "tips": "Consejos",
+      "tags": "Tags",
+      "source": "Fuente",
+      "stepImage": "Paso {{n}}"
+    },
+    "delete": {
+      "title": "¿Enviar a la papelera?",
+      "description": "Podrás restaurarla desde la papelera.",
+      "confirm": "Eliminar",
+      "deleting": "Eliminando..."
+    },
+    "search": {
+      "placeholder": "Buscar en mis recetas...",
+      "allDifficulties": "Cualquier dificultad",
+      "allTags": "Cualquier tag",
+      "noResults": "No hay recetas que coincidan con tu búsqueda"
+    }
+  },
+  "backup": {
+    "export": "Exportar recetas",
+    "exportDescription": "Guarda todas tus recetas en un fichero JSON (schema.org).",
+    "import": "Importar recetas",
+    "importDescription": "Recupera un fichero JSON exportado desde Saporium u otra app de recetas."
+  },
+  "errors": {
+    "recipeNotFound": "Receta no encontrada",
+    "notFound": "No encontrado",
+    "backHome": "Volver al inicio"
+  }
+}
