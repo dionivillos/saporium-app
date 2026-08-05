@@ -78,10 +78,15 @@ Both directions matter and share one module — the reverse mapper is used by JS
 - **Export**: `name`, `description`, `recipeYield` (`min` or `min-max`), ISO-8601 durations
   (`prepTime`/`cookTime`/`totalTime` as `PT#M`), `recipeIngredient` (the raw line),
   `recipeInstructions` as `HowToStep[]`, `recipeCategory`/`keywords` from tags,
-  `datePublished`/`dateModified`, `inLanguage`.
+  `datePublished`/`dateModified`, `inLanguage`. Tips ride in `comment` and difficulty in a
+  non-standard `difficulty` key — schema.org has no home for either, and dropping them
+  would lose user data on a round trip. Other readers ignore what they do not know.
 - **Import**: handle the messy real world — `@graph` arrays, `@type` as string or array,
   `recipeInstructions` as `HowToStep[]`, plain strings or `HowToSection`, durations like
   `PT1H30M`, `recipeYield` as string or number, tags lowercased and capped at 10.
+- **Import only ever adds.** It never overwrites or merges, so a mistaken import is undone
+  by deleting what came in. Entries that cannot be mapped are counted and reported, never
+  dropped silently.
 
 ## Repo conventions
 
@@ -109,7 +114,8 @@ Both directions matter and share one module — the reverse mapper is used by JS
 src/app/          Expo Router routes (file = screen). `__tests__/` inside is ignored by the router.
 src/components/   Reusable UI. Themed primitives: themed-text, themed-view.
 src/constants/    Design tokens (colors, spacing, fonts) — components never hardcode a color.
-src/db/           Drizzle schema, connection, query helpers, dev seed, generated migrations/.
+src/db/           Drizzle schema, connection, query helpers, backup, dev seed, generated migrations/.
+src/lib/          Pure helpers with no React and no database (schema.org mapping, durations).
 src/hooks/        Shared hooks (use-theme reads the tokens for the active color scheme).
 src/i18n/         i18next setup; message catalogs in `messages/<locale>.json`.
 src/test-utils/   Test-only helpers (in-memory database). Never imported by app code.

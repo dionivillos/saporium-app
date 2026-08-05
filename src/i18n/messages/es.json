@@ -89,10 +89,21 @@
     "error": "No se ha podido preparar la base de datos"
   },
   "backup": {
+    "title": "Copia de seguridad",
     "export": "Exportar recetas",
-    "exportDescription": "Guarda todas tus recetas en un fichero JSON (schema.org).",
+    "exportDescription": "Guarda todas tus recetas en un fichero JSON (schema.org). Sirve como copia de seguridad y lo leen otras apps de recetas.",
+    "exportEmpty": "Todavía no hay recetas que exportar.",
+    "exportError": "No se ha podido crear el fichero.",
     "import": "Importar recetas",
-    "importDescription": "Recupera un fichero JSON exportado desde Saporium u otra app de recetas."
+    "importDescription": "Añade las recetas de un fichero JSON exportado desde Saporium u otra app. Nunca sobrescribe lo que ya tienes.",
+    "importing": "Importando...",
+    "imported_one": "Se ha importado {{count}} receta.",
+    "imported_other": "Se han importado {{count}} recetas.",
+    "importedNone": "El fichero no contenía recetas que se puedan importar.",
+    "importSkipped_one": "Se ha descartado {{count}} receta incompleta.",
+    "importSkipped_other": "Se han descartado {{count}} recetas incompletas.",
+    "importInvalid": "El fichero no es un JSON válido.",
+    "importError": "No se ha podido leer el fichero."
   },
   "errors": {
     "recipeNotFound": "Receta no encontrada",

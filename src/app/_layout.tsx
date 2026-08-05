@@ -1,8 +1,9 @@
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
+import { DarkTheme, DefaultTheme, Link, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { StyleSheet } from 'react-native';
 
 import { DatabaseGate } from '@/components/database-gate';
 import { db } from '@/db/client';
@@ -25,9 +26,31 @@ export default function RootLayout() {
       <StatusBar style="auto" />
       <DatabaseGate ready={success} error={error}>
         <Stack>
-          <Stack.Screen name="index" options={{ title: t('recipes.title') }} />
+          <Stack.Screen
+            name="index"
+            options={{
+              title: t('recipes.title'),
+              headerRight: () => (
+                <Link
+                  href="/backup"
+                  accessibilityLabel={t('backup.title')}
+                  style={styles.headerLink}
+                >
+                  ⋯
+                </Link>
+              ),
+            }}
+          />
+          <Stack.Screen name="backup" options={{ title: t('backup.title') }} />
         </Stack>
       </DatabaseGate>
     </ThemeProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  headerLink: {
+    fontSize: 22,
+    paddingHorizontal: 4,
+  },
+});
