@@ -1,23 +1,48 @@
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, StyleSheet, View } from 'react-native';
 
+import { RecipeFilterBar } from '@/components/recipe-filter-bar';
 import { RecipeListItem } from '@/components/recipe-list-item';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
 import { db } from '@/db/client';
-import { recipeListQuery } from '@/db/recipes';
+import { listUsedTags, NO_FILTERS, recipeListQuery, type RecipeFilters } from '@/db/recipes';
+import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import { useTheme } from '@/hooks/use-theme';
 
 export default function RecipeListScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const theme = useTheme();
-  const { data: recipes } = useLiveQuery(recipeListQuery(db));
 
-  if (recipes.length === 0) {
+  const [filters, setFilters] = useState<RecipeFilters>(NO_FILTERS);
+  const [tags, setTags] = useState<string[]>([]);
+
+  // The input keeps every keystroke; only the query waits for the typing to settle.
+  const search = useDebouncedValue(filters.search);
+  const applied = useMemo<RecipeFilters>(() => ({ ...filters, search }), [filters, search]);
+
+  const { data: recipes } = useLiveQuery(recipeListQuery(db, applied), [
+    applied.search,
+    applied.difficulty,
+    applied.tag,
+  ]);
+
+  useFocusEffect(
+    useCallback(() => {
+      setTags(listUsedTags(db));
+    }, [])
+  );
+
+  const filtering =
+    applied.search.trim().length > 0 || applied.difficulty !== null || applied.tag !== null;
+
+  // Nothing to search in yet, so the filter bar would only be in the way.
+  if (recipes.length === 0 && !filtering) {
     return (
       <ThemedView style={styles.emptyContainer}>
         <View style={styles.empty}>
@@ -39,6 +64,18 @@ export default function RecipeListScreen() {
         keyExtractor={(recipe) => recipe.id}
         style={styles.scroll}
         contentContainerStyle={styles.list}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+        ListHeaderComponent={
+          <RecipeFilterBar filters={filters} onChange={setFilters} tags={tags} />
+        }
+        ListEmptyComponent={
+          <View style={styles.noResults}>
+            <ThemedText themeColor="textSecondary" style={styles.centered}>
+              {t('recipes.search.noResults')}
+            </ThemedText>
+          </View>
+        }
         ItemSeparatorComponent={() => (
           <View style={[styles.separator, { backgroundColor: theme.border }]} />
         )}
@@ -60,7 +97,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   list: {
-    paddingVertical: Spacing.two,
+    paddingBottom: Spacing.two,
     maxWidth: MaxContentWidth,
     width: '100%',
     alignSelf: 'center',
@@ -68,6 +105,10 @@ const styles = StyleSheet.create({
   separator: {
     height: StyleSheet.hairlineWidth,
     marginHorizontal: Spacing.four,
+  },
+  noResults: {
+    paddingHorizontal: Spacing.four,
+    paddingVertical: Spacing.five,
   },
   emptyContainer: {
     flex: 1,

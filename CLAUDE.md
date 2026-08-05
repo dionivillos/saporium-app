@@ -103,8 +103,9 @@ Both directions matter and share one module — the reverse mapper is used by JS
   accepted issue. Open questions are discussed first, not assumed.
 - Branch per issue off `main` (`feature/<short-slug>`), open a PR, never push to `main`
   directly. Reference the issue it closes.
-- **Never merge a PR.** Open it, report what is in it, and stop — the owner reviews and
-  merges. Green checks are not permission, and neither is "continue".
+- **Merging is autonomous, the PR is still the unit of work.** Every change goes through a
+  branch and a PR so the history stays reviewable, but an agent may merge its own once
+  typecheck, lint, format:check and tests pass. Report what went in.
 - Markdown files are hand-formatted and excluded from Prettier (it destroys the decision
   tables). Keep lines wrapped at ~100 characters.
 
