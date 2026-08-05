@@ -4,3 +4,9 @@
 jest.mock('expo-crypto', () => ({
   randomUUID: (): string => require('node:crypto').randomUUID(),
 }));
+
+// expo-image reaches for native APIs at import time. Nothing under test cares
+// how a photo is decoded, only that it is rendered when there is one.
+jest.mock('expo-image', () => ({
+  Image: require('react-native').View,
+}));

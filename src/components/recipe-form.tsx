@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 
+import { PhotoField } from '@/components/photo-field';
 import { TextField } from '@/components/text-field';
 import { ThemedText } from '@/components/themed-text';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
@@ -38,6 +39,7 @@ export type RecipeFormValues = {
   servingsMax: string;
   tips: string;
   tags: string;
+  coverImagePath: string | null;
 };
 
 export const EMPTY_FORM: RecipeFormValues = {
@@ -52,6 +54,7 @@ export const EMPTY_FORM: RecipeFormValues = {
   servingsMax: '',
   tips: '',
   tags: '',
+  coverImagePath: null,
 };
 
 export function toCreateInput(values: RecipeFormValues): CreateRecipeInput {
@@ -66,6 +69,7 @@ export function toCreateInput(values: RecipeFormValues): CreateRecipeInput {
     servingsMin: servingsMin !== null && servingsMin > 0 ? servingsMin : 1,
     servingsMax: parseOptionalNumber(values.servingsMax),
     tips: values.tips.trim() || null,
+    coverImagePath: values.coverImagePath,
     ingredients: parseIngredientLines(values.ingredients),
     steps: parseStepText(values.steps),
     tags: parseTagText(values.tags),
@@ -152,6 +156,11 @@ export function RecipeForm({ initialValues, submitLabel, onSubmit, onChange }: P
 
         {showDetails && (
           <View style={styles.details}>
+            <PhotoField
+              value={values.coverImagePath}
+              onChange={(path) => update('coverImagePath', path)}
+            />
+
             <TextField
               label={t('recipes.form.description')}
               placeholder={t('recipes.form.descriptionPlaceholder')}

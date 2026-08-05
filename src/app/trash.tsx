@@ -11,6 +11,7 @@ import { db } from '@/db/client';
 import { deleteRecipePermanently, listTrashedRecipes, restoreRecipe } from '@/db/recipes';
 import type { Recipe } from '@/db/schema';
 import { useTheme } from '@/hooks/use-theme';
+import { deletePhoto } from '@/lib/photos';
 
 export default function TrashScreen() {
   const { t } = useTranslation();
@@ -35,7 +36,10 @@ export default function TrashScreen() {
           text: t('trash.deleteForever'),
           style: 'destructive',
           onPress: () => {
+            // The row goes first: an orphaned file is harmless, a broken
+            // reference is not.
             deleteRecipePermanently(db, recipe.id);
+            deletePhoto(recipe.coverImagePath);
             refresh();
           },
         },
