@@ -13,8 +13,11 @@
     "confirm": "Confirmar",
     "close": "Cerrar",
     "minutes": "{{value}} min",
+    "hours": "{{count}} h",
+    "hoursMinutes": "{{hours}} h {{minutes}} min",
     "servings_one": "{{count}} ración",
-    "servings_other": "{{count}} raciones"
+    "servings_other": "{{count}} raciones",
+    "servingsRange": "{{min}}-{{max}} raciones"
   },
   "recipes": {
     "title": "Mis recetas",
@@ -25,6 +28,11 @@
     "emptyAction": "Crear primera receta",
     "new": "Nueva receta",
     "edit": "Editar receta",
+    "difficulty": {
+      "easy": "Fácil",
+      "medium": "Media",
+      "hard": "Difícil"
+    },
     "form": {
       "title": "Título",
       "titlePlaceholder": "Ej. Paella valenciana",
@@ -32,9 +40,6 @@
       "description": "Descripción",
       "descriptionPlaceholder": "Una descripción breve de la receta...",
       "difficulty": "Dificultad",
-      "difficultyEasy": "Fácil",
-      "difficultyMedium": "Media",
-      "difficultyHard": "Difícil",
       "prepTime": "Preparación (min)",
       "cookTime": "Cocción (min)",
       "servingsMin": "Raciones (mín.)",

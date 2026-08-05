@@ -184,14 +184,20 @@ export function getRecipe(db: Database, id: string): RecipeWithDetails | null {
   };
 }
 
-/** Most recently touched first — trashed recipes never appear here. */
-export function listRecipes(db: Database): Recipe[] {
+/**
+ * Most recently touched first, trashed recipes excluded. Returned unexecuted so
+ * screens can hand it to `useLiveQuery` and re-render on every write.
+ */
+export function recipeListQuery(db: Database) {
   return db
     .select()
     .from(recipes)
     .where(isNull(recipes.deletedAt))
-    .orderBy(desc(recipes.updatedAt))
-    .all();
+    .orderBy(desc(recipes.updatedAt));
+}
+
+export function listRecipes(db: Database): Recipe[] {
+  return recipeListQuery(db).all();
 }
 
 export function listTrashedRecipes(db: Database): Recipe[] {
