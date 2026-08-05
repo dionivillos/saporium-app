@@ -60,7 +60,12 @@
       "submitEdit": "Actualizar receta",
       "tagsPlaceholder": "cena, postre, rápido",
       "draftRestored": "Hemos recuperado lo que estabas escribiendo.",
-      "discardDraft": "Descartar"
+      "discardDraft": "Descartar",
+      "photoTake": "Hacer foto",
+      "photoChoose": "Elegir de la galería",
+      "photoRemove": "Quitar foto",
+      "photoPermission": "Necesito permiso para acceder a la cámara o a tus fotos.",
+      "photoError": "No se ha podido guardar la foto."
     },
     "detail": {
       "prepTime": "Preparación",

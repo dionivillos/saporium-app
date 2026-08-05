@@ -1,3 +1,4 @@
+import { Image } from 'expo-image';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
@@ -6,6 +7,7 @@ import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
 import type { RecipeWithDetails } from '@/db/recipes';
 import { useTheme } from '@/hooks/use-theme';
+import { photoUri } from '@/lib/photos';
 
 type Props = {
   recipe: RecipeWithDetails;
@@ -25,6 +27,15 @@ export function RecipeDetail({ recipe, onDelete }: Props) {
 
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+      {recipe.coverImagePath !== null && (
+        <Image
+          source={{ uri: photoUri(recipe.coverImagePath) }}
+          style={styles.cover}
+          contentFit="cover"
+          accessibilityIgnoresInvertColors
+        />
+      )}
+
       <View style={styles.header}>
         <ThemedText style={styles.title}>{recipe.title}</ThemedText>
         {recipe.description !== null && (
@@ -134,6 +145,11 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.three,
     paddingBottom: Spacing.six,
     gap: Spacing.five,
+  },
+  cover: {
+    width: '100%',
+    aspectRatio: 4 / 3,
+    borderRadius: Spacing.three,
   },
   header: {
     gap: Spacing.two,

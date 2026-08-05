@@ -10,6 +10,7 @@ import { Spacing } from '@/constants/theme';
 import { db } from '@/db/client';
 import { getRecipe, updateRecipe, type RecipeWithDetails } from '@/db/recipes';
 import { ingredientsToText, numberToText, stepsToText, tagsToText } from '@/lib/recipe-text';
+import { deletePhoto } from '@/lib/photos';
 import type { CreateRecipeInput } from '@/validations/recipe';
 
 function toFormValues(recipe: RecipeWithDetails): RecipeFormValues {
@@ -25,6 +26,7 @@ function toFormValues(recipe: RecipeWithDetails): RecipeFormValues {
     servingsMax: numberToText(recipe.servingsMax),
     tips: recipe.tips ?? '',
     tags: tagsToText(recipe.tags),
+    coverImagePath: recipe.coverImagePath,
   };
 }
 
@@ -35,7 +37,13 @@ export default function EditRecipeScreen() {
   const recipe = useMemo(() => getRecipe(db, id), [id]);
 
   function handleSubmit(input: CreateRecipeInput) {
+    const previous = recipe?.coverImagePath ?? null;
     updateRecipe(db, id, input);
+
+    // Only once the new path is saved, so a failure never strands the recipe
+    // pointing at a file that is gone.
+    if (previous !== null && previous !== input.coverImagePath) deletePhoto(previous);
+
     router.back();
   }
 

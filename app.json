@@ -40,7 +40,15 @@
         }
       ],
       "expo-sqlite",
-      "expo-sharing"
+      "expo-sharing",
+      "expo-image",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Saporium usa tus fotos para ilustrar tus recetas. Las imágenes se guardan solo en tu dispositivo.",
+          "cameraPermission": "Saporium usa la cámara para fotografiar tus recetas. Las imágenes se guardan solo en tu dispositivo."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

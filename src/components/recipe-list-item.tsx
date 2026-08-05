@@ -1,10 +1,12 @@
-import { Pressable, StyleSheet } from 'react-native';
+import { Image } from 'expo-image';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { RecipeMeta } from '@/components/recipe-meta';
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
 import type { Recipe } from '@/db/schema';
 import { useTheme } from '@/hooks/use-theme';
+import { photoUri } from '@/lib/photos';
 
 type Props = {
   recipe: Recipe;
@@ -24,19 +26,40 @@ export function RecipeListItem({ recipe, onPress }: Props) {
         { backgroundColor: pressed ? theme.backgroundSelected : theme.background },
       ]}
     >
-      <ThemedText style={styles.title} numberOfLines={2}>
-        {recipe.title}
-      </ThemedText>
-      <RecipeMeta recipe={recipe} />
+      {recipe.coverImagePath !== null && (
+        <Image
+          source={{ uri: photoUri(recipe.coverImagePath) }}
+          style={styles.thumbnail}
+          contentFit="cover"
+          accessibilityIgnoresInvertColors
+        />
+      )}
+      <View style={styles.text}>
+        <ThemedText style={styles.title} numberOfLines={2}>
+          {recipe.title}
+        </ThemedText>
+        <RecipeMeta recipe={recipe} />
+      </View>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   row: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: Spacing.four,
     paddingVertical: Spacing.three,
+    gap: Spacing.three,
+  },
+  text: {
+    flex: 1,
     gap: Spacing.one,
+  },
+  thumbnail: {
+    width: 64,
+    height: 64,
+    borderRadius: Spacing.two,
   },
   title: {
     fontSize: 18,
