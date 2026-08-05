@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { RecipeMeta } from '@/components/recipe-meta';
 import { ThemedText } from '@/components/themed-text';
@@ -9,13 +9,15 @@ import { useTheme } from '@/hooks/use-theme';
 
 type Props = {
   recipe: RecipeWithDetails;
+  /** Omitted where the recipe cannot be deleted from. */
+  onDelete?: () => void;
 };
 
 /**
  * Read while cooking: generous spacing, large-ish type, ingredients and steps
  * scannable at arm's length.
  */
-export function RecipeDetail({ recipe }: Props) {
+export function RecipeDetail({ recipe, onDelete }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -75,6 +77,20 @@ export function RecipeDetail({ recipe }: Props) {
             </View>
           ))}
         </View>
+      )}
+      {onDelete !== undefined && (
+        <Pressable
+          accessibilityRole="button"
+          onPress={onDelete}
+          style={({ pressed }) => [
+            styles.delete,
+            { backgroundColor: pressed ? theme.backgroundSelected : 'transparent' },
+          ]}
+        >
+          <ThemedText type="smallBold" style={styles.deleteLabel}>
+            {t('recipes.delete.action')}
+          </ThemedText>
+        </Pressable>
       )}
     </ScrollView>
   );
@@ -167,5 +183,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.one,
     borderRadius: 999,
+  },
+  delete: {
+    marginTop: Spacing.three,
+    paddingVertical: Spacing.three,
+    borderRadius: Spacing.two,
+    alignItems: 'center',
+  },
+  deleteLabel: {
+    fontSize: 16,
+    color: '#C0392B',
   },
 });

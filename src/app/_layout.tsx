@@ -38,8 +38,8 @@ export default function RootLayout() {
                 headerRight: () => (
                   <View style={styles.headerActions}>
                     <Link
-                      href="/backup"
-                      accessibilityLabel={t('backup.title')}
+                      href="/more"
+                      accessibilityLabel={t('more.title')}
                       style={styles.headerIcon}
                     >
                       ⋯
@@ -56,6 +56,8 @@ export default function RootLayout() {
               }}
             />
             <Stack.Screen name="recipe/new" options={{ title: t('recipes.new') }} />
+            <Stack.Screen name="more" options={{ title: t('more.title') }} />
+            <Stack.Screen name="trash" options={{ title: t('trash.title') }} />
             <Stack.Screen name="backup" options={{ title: t('backup.title') }} />
           </Stack>
         </DatabaseGate>

@@ -76,10 +76,10 @@
       "stepImage": "Paso {{n}}"
     },
     "delete": {
+      "action": "Eliminar receta",
       "title": "¿Enviar a la papelera?",
       "description": "Podrás restaurarla desde la papelera.",
-      "confirm": "Eliminar",
-      "deleting": "Eliminando..."
+      "confirm": "Eliminar"
     },
     "search": {
       "placeholder": "Buscar en mis recetas...",
@@ -113,5 +113,17 @@
     "recipeNotFound": "Receta no encontrada",
     "notFound": "No encontrado",
     "backHome": "Volver al inicio"
+  },
+  "more": {
+    "title": "Más"
+  },
+  "trash": {
+    "title": "Papelera",
+    "description": "Las recetas eliminadas se guardan aquí hasta que las borres del todo.",
+    "empty": "La papelera está vacía",
+    "restore": "Restaurar",
+    "deleteForever": "Eliminar definitivamente",
+    "deleteForeverTitle": "¿Eliminar definitivamente?",
+    "deleteForeverDescription": "«{{title}}» se borrará para siempre. Esta acción no se puede deshacer."
   }
 }
