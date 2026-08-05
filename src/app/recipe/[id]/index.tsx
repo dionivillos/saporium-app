@@ -1,5 +1,5 @@
-import { Stack, useLocalSearchParams } from 'expo-router';
-import { useMemo } from 'react';
+import { Link, Stack, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet } from 'react-native';
 
@@ -8,14 +8,19 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { db } from '@/db/client';
-import { getRecipe } from '@/db/recipes';
+import { getRecipe, type RecipeWithDetails } from '@/db/recipes';
 
 export default function RecipeDetailScreen() {
   const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
-  // Read once per recipe. Editing does not exist yet; when it does this needs
-  // to become a live query so the screen reflects a save.
-  const recipe = useMemo(() => getRecipe(db, id), [id]);
+  const [recipe, setRecipe] = useState<RecipeWithDetails | null>(null);
+
+  // Re-read on focus so returning from the edit screen shows the saved recipe.
+  useFocusEffect(
+    useCallback(() => {
+      setRecipe(getRecipe(db, id));
+    }, [id])
+  );
 
   if (recipe === null) {
     return (
@@ -28,7 +33,16 @@ export default function RecipeDetailScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <Stack.Screen options={{ title: recipe.title }} />
+      <Stack.Screen
+        options={{
+          title: recipe.title,
+          headerRight: () => (
+            <Link href={`/recipe/${id}/edit`} style={styles.headerLink}>
+              {t('common.edit')}
+            </Link>
+          ),
+        }}
+      />
       <RecipeDetail recipe={recipe} />
     </ThemedView>
   );
@@ -43,5 +57,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: Spacing.four,
+  },
+  headerLink: {
+    fontSize: 17,
+    color: '#0A7EA4',
   },
 });

@@ -45,19 +45,22 @@
       "servingsMin": "Raciones (mín.)",
       "servingsMax": "Raciones (máx.)",
       "ingredients": "Ingredientes",
-      "ingredientsPlaceholder": "Un ingrediente por línea",
+      "ingredientsPlaceholder": "Un ingrediente por línea:\n500 g de patatas\n4 huevos",
       "ingredientsRequired": "Añade al menos un ingrediente",
       "steps": "Pasos",
-      "stepsPlaceholder": "Un paso por línea",
+      "stepsPlaceholder": "Un paso por párrafo. Deja una línea en blanco entre pasos.",
       "stepsRequired": "Añade al menos un paso",
       "tags": "Tags",
-      "tagsHint": "Máximo 10.",
+      "tagsHint": "Separados por comas. Máximo 10.",
       "tips": "Consejos",
       "tipsPlaceholder": "Trucos y consejos para que salga perfecto...",
       "coverImage": "Foto de portada",
       "moreDetails": "Más detalles",
       "submit": "Guardar receta",
-      "submitEdit": "Actualizar receta"
+      "submitEdit": "Actualizar receta",
+      "tagsPlaceholder": "cena, postre, rápido",
+      "draftRestored": "Hemos recuperado lo que estabas escribiendo.",
+      "discardDraft": "Descartar"
     },
     "detail": {
       "prepTime": "Preparación",
@@ -83,7 +86,8 @@
       "allDifficulties": "Cualquier dificultad",
       "allTags": "Cualquier tag",
       "noResults": "No hay recetas que coincidan con tu búsqueda"
-    }
+    },
+    "created": "Receta guardada"
   },
   "database": {
     "error": "No se ha podido preparar la base de datos"
