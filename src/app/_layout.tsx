@@ -4,7 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { DatabaseGate } from '@/components/database-gate';
 import { db } from '@/db/client';
@@ -36,16 +36,26 @@ export default function RootLayout() {
               options={{
                 title: t('recipes.title'),
                 headerRight: () => (
-                  <Link
-                    href="/backup"
-                    accessibilityLabel={t('backup.title')}
-                    style={styles.headerLink}
-                  >
-                    ⋯
-                  </Link>
+                  <View style={styles.headerActions}>
+                    <Link
+                      href="/backup"
+                      accessibilityLabel={t('backup.title')}
+                      style={styles.headerIcon}
+                    >
+                      ⋯
+                    </Link>
+                    <Link
+                      href="/recipe/new"
+                      accessibilityLabel={t('recipes.new')}
+                      style={styles.headerIcon}
+                    >
+                      ＋
+                    </Link>
+                  </View>
                 ),
               }}
             />
+            <Stack.Screen name="recipe/new" options={{ title: t('recipes.new') }} />
             <Stack.Screen name="backup" options={{ title: t('backup.title') }} />
           </Stack>
         </DatabaseGate>
@@ -58,8 +68,13 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
-  headerLink: {
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  headerIcon: {
     fontSize: 22,
-    paddingHorizontal: 4,
+    paddingHorizontal: 2,
   },
 });
