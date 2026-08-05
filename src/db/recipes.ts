@@ -1,5 +1,7 @@
-import { and, desc, eq, inArray, isNotNull, isNull } from 'drizzle-orm';
+import { and, desc, eq, exists, inArray, isNotNull, isNull, or, sql, type SQL } from 'drizzle-orm';
+import type { SQLiteColumn } from 'drizzle-orm/sqlite-core';
 
+import { escapeLikePattern, foldForSearch, FOLDED_CHARACTERS } from '@/lib/search-text';
 import {
   createRecipeSchema,
   updateRecipeSchema,
@@ -184,20 +186,102 @@ export function getRecipe(db: Database, id: string): RecipeWithDetails | null {
   };
 }
 
+export type RecipeFilters = {
+  /** Free text; matched against the title and the recipe's ingredients. */
+  search: string;
+  difficulty: Recipe['difficulty'];
+  tag: string | null;
+};
+
+export const NO_FILTERS: RecipeFilters = { search: '', difficulty: null, tag: null };
+
+/**
+ * Applies the same folding as `foldForSearch` inside SQLite. Nested `replace`
+ * calls are unlovely, but they keep matching in the database — the alternative
+ * is loading every recipe and its ingredients into memory to filter there.
+ * Both the lowercase and uppercase forms are replaced because `lower()` leaves
+ * accented capitals alone.
+ */
+function folded(column: SQLiteColumn): SQL {
+  let expression: SQL = sql`lower(${column})`;
+  for (const [accented, plain] of Object.entries(FOLDED_CHARACTERS)) {
+    expression = sql`replace(${expression}, ${accented}, ${plain})`;
+    expression = sql`replace(${expression}, ${accented.toUpperCase()}, ${plain})`;
+  }
+  return expression;
+}
+
+/** A NULL column yields NULL here, which behaves as "no match" inside OR. */
+function matches(column: SQLiteColumn, pattern: string): SQL {
+  return sql`${folded(column)} like ${pattern} escape '\\'`;
+}
+
+function searchCondition(db: Database, term: string): SQL | undefined {
+  const normalized = foldForSearch(term).trim();
+  if (normalized.length === 0) return undefined;
+
+  const pattern = `%${escapeLikePattern(normalized)}%`;
+
+  return or(
+    matches(recipes.title, pattern),
+    exists(
+      db
+        .select({ one: sql`1` })
+        .from(ingredients)
+        .where(
+          and(
+            eq(ingredients.recipeId, recipes.id),
+            or(matches(ingredients.rawText, pattern), matches(ingredients.name, pattern))
+          )
+        )
+    )
+  );
+}
+
+function tagCondition(db: Database, name: string): SQL | undefined {
+  return exists(
+    db
+      .select({ one: sql`1` })
+      .from(recipeTags)
+      .innerJoin(tags, eq(tags.id, recipeTags.tagId))
+      .where(and(eq(recipeTags.recipeId, recipes.id), eq(tags.name, name)))
+  );
+}
+
 /**
  * Most recently touched first, trashed recipes excluded. Returned unexecuted so
  * screens can hand it to `useLiveQuery` and re-render on every write.
  */
-export function recipeListQuery(db: Database) {
+export function recipeListQuery(db: Database, filters: RecipeFilters = NO_FILTERS) {
+  const conditions = [
+    isNull(recipes.deletedAt),
+    searchCondition(db, filters.search),
+    filters.difficulty === null ? undefined : eq(recipes.difficulty, filters.difficulty),
+    filters.tag === null ? undefined : tagCondition(db, filters.tag),
+  ];
+
   return db
     .select()
     .from(recipes)
-    .where(isNull(recipes.deletedAt))
+    .where(and(...conditions))
     .orderBy(desc(recipes.updatedAt));
 }
 
-export function listRecipes(db: Database): Recipe[] {
-  return recipeListQuery(db).all();
+export function listRecipes(db: Database, filters: RecipeFilters = NO_FILTERS): Recipe[] {
+  return recipeListQuery(db, filters).all();
+}
+
+/** Tags actually in use by a recipe that is not in the trash, for the filter row. */
+export function listUsedTags(db: Database): string[] {
+  return db
+    .selectDistinct({ name: tags.name })
+    .from(tags)
+    .innerJoin(recipeTags, eq(recipeTags.tagId, tags.id))
+    .innerJoin(recipes, eq(recipes.id, recipeTags.recipeId))
+    .where(isNull(recipes.deletedAt))
+    .orderBy(tags.name)
+    .all()
+    .map((row) => row.name);
 }
 
 export function listTrashedRecipes(db: Database): Recipe[] {
