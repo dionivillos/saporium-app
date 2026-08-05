@@ -107,15 +107,28 @@ Both directions matter and share one module — the reverse mapper is used by JS
 src/app/          Expo Router routes (file = screen). `__tests__/` inside is ignored by the router.
 src/components/   Reusable UI. Themed primitives: themed-text, themed-view.
 src/constants/    Design tokens (colors, spacing, fonts) — components never hardcode a color.
+src/db/           Drizzle schema, connection, query helpers, dev seed, generated migrations/.
 src/hooks/        Shared hooks (use-theme reads the tokens for the active color scheme).
 src/i18n/         i18next setup; message catalogs in `messages/<locale>.json`.
+src/test-utils/   Test-only helpers (in-memory database). Never imported by app code.
+src/validations/  Zod schemas — the single definition of what a valid recipe is.
 assets/images/    App icon and splash. Still Expo placeholders — real art is an F4 task.
 ```
 
 Commands: `npm start` (dev server), `npm run ios`, `npm run typecheck`, `npm run lint`,
-`npm run format`, `npm test`. Before opening a PR, typecheck + lint + format:check + test
-must all pass. `npx expo-doctor` should stay at 20/20; `npx expo export --platform ios`
-verifies the bundle builds without needing Xcode.
+`npm run format`, `npm test`, `npm run db:generate`. Before opening a PR, typecheck + lint +
+format:check + test must all pass. `npx expo-doctor` should stay at 20/20;
+`npx expo export --platform ios` verifies the bundle builds without needing Xcode.
+
+Database rules:
+
+- Change `src/db/schema.ts`, then run `npm run db:generate` and commit the generated
+  migration. Never edit files under `src/db/migrations/` by hand, and never rewrite a
+  migration that has already shipped — add a new one.
+- Query helpers take the connection as their first argument, so tests can run them against
+  an in-memory SQLite (`createTestDatabase()`); `src/db/client.ts` opens the real one and
+  must never be imported from a test.
+- Migrations run at startup behind `DatabaseGate`; nothing reads or writes before that.
 
 The app runs as a **development build**, not in Expo Go (the iOS Expo Go on the App Store
 is frozen at an older SDK). `npm run ios` prebuilds the native project, compiles it and

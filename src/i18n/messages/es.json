@@ -80,6 +80,9 @@
       "noResults": "No hay recetas que coincidan con tu búsqueda"
     }
   },
+  "database": {
+    "error": "No se ha podido preparar la base de datos"
+  },
   "backup": {
     "export": "Exportar recetas",
     "exportDescription": "Guarda todas tus recetas en un fichero JSON (schema.org).",
