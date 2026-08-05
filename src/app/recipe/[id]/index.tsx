@@ -1,19 +1,34 @@
-import { Link, Stack, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { Link, Stack, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet } from 'react-native';
+import { Alert, StyleSheet } from 'react-native';
 
 import { RecipeDetail } from '@/components/recipe-detail';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { db } from '@/db/client';
-import { getRecipe, type RecipeWithDetails } from '@/db/recipes';
+import { getRecipe, softDeleteRecipe, type RecipeWithDetails } from '@/db/recipes';
 
 export default function RecipeDetailScreen() {
   const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
   const [recipe, setRecipe] = useState<RecipeWithDetails | null>(null);
+
+  function confirmDelete() {
+    Alert.alert(t('recipes.delete.title'), t('recipes.delete.description'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      {
+        text: t('recipes.delete.confirm'),
+        style: 'destructive',
+        onPress: () => {
+          softDeleteRecipe(db, id);
+          router.back();
+        },
+      },
+    ]);
+  }
 
   // Re-read on focus so returning from the edit screen shows the saved recipe.
   useFocusEffect(
@@ -43,7 +58,7 @@ export default function RecipeDetailScreen() {
           ),
         }}
       />
-      <RecipeDetail recipe={recipe} />
+      <RecipeDetail recipe={recipe} onDelete={confirmDelete} />
     </ThemedView>
   );
 }
