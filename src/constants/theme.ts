@@ -12,6 +12,7 @@ export const Colors = {
     background: '#FFFCF7',
     backgroundElement: '#F2ECE2',
     backgroundSelected: '#E7DFD2',
+    border: '#E8E0D4',
   },
   dark: {
     text: '#F7F3EC',
@@ -19,6 +20,7 @@ export const Colors = {
     background: '#151312',
     backgroundElement: '#23201D',
     backgroundSelected: '#2E2A26',
+    border: '#33302B',
   },
 } as const;
 
