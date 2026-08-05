@@ -37,6 +37,7 @@ export default function RecipeListScreen() {
       <FlatList
         data={recipes}
         keyExtractor={(recipe) => recipe.id}
+        style={styles.scroll}
         contentContainerStyle={styles.list}
         ItemSeparatorComponent={() => (
           <View style={[styles.separator, { backgroundColor: theme.border }]} />
@@ -51,6 +52,11 @@ export default function RecipeListScreen() {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  // Same reason as the detail's ScrollView: without flex the list grows past
+  // the screen instead of scrolling inside it.
+  scroll: {
     flex: 1,
   },
   list: {

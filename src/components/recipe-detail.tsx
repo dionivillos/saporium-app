@@ -22,7 +22,7 @@ export function RecipeDetail({ recipe }: Props) {
   const groups = groupIngredients(recipe);
 
   return (
-    <ScrollView contentContainerStyle={styles.content}>
+    <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
       <View style={styles.header}>
         <ThemedText style={styles.title}>{recipe.title}</ThemedText>
         {recipe.description !== null && (
@@ -108,6 +108,11 @@ function groupIngredients(recipe: RecipeWithDetails): IngredientGroup[] {
 }
 
 const styles = StyleSheet.create({
+  // Without an explicit flex the ScrollView sizes itself to its content inside
+  // a flex parent, overflowing the screen instead of scrolling.
+  scroll: {
+    flex: 1,
+  },
   content: {
     paddingHorizontal: Spacing.four,
     paddingTop: Spacing.three,
