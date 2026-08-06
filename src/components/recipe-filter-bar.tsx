@@ -106,7 +106,6 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.three,
   },
   input: {
-    marginHorizontal: Spacing.four,
     borderRadius: Spacing.two,
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.two + Spacing.one,
@@ -116,7 +115,7 @@ const styles = StyleSheet.create({
   chips: {
     flexDirection: 'row',
     gap: Spacing.two,
-    paddingHorizontal: Spacing.four,
+    paddingRight: Spacing.three,
   },
   chip: {
     paddingHorizontal: Spacing.three,
