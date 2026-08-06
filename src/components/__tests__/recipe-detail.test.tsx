@@ -61,6 +61,6 @@ describe('RecipeDetail', () => {
 
     expect(screen.getByText('Consejos')).toBeTruthy();
     expect(screen.getByText('Deja reposar')).toBeTruthy();
-    expect(screen.getByText('cena')).toBeTruthy();
+    expect(screen.getByText('#cena')).toBeTruthy();
   });
 });

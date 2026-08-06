@@ -4,20 +4,24 @@ import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, StyleSheet, View } from 'react-native';
 
+import { RecipeCard } from '@/components/recipe-card';
 import { RecipeFilterBar } from '@/components/recipe-filter-bar';
-import { RecipeListItem } from '@/components/recipe-list-item';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
 import { db } from '@/db/client';
-import { listUsedTags, NO_FILTERS, recipeListQuery, type RecipeFilters } from '@/db/recipes';
+import {
+  listUsedTags,
+  NO_FILTERS,
+  recipeListQuery,
+  toListEntry,
+  type RecipeFilters,
+} from '@/db/recipes';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
-import { useTheme } from '@/hooks/use-theme';
 
 export default function RecipeListScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const theme = useTheme();
 
   const [filters, setFilters] = useState<RecipeFilters>(NO_FILTERS);
   const [tags, setTags] = useState<string[]>([]);
@@ -26,11 +30,13 @@ export default function RecipeListScreen() {
   const search = useDebouncedValue(filters.search);
   const applied = useMemo<RecipeFilters>(() => ({ ...filters, search }), [filters, search]);
 
-  const { data: recipes } = useLiveQuery(recipeListQuery(db, applied), [
+  const { data: rows } = useLiveQuery(recipeListQuery(db, applied), [
     applied.search,
     applied.difficulty,
     applied.tag,
   ]);
+
+  const recipes = useMemo(() => rows.map(toListEntry), [rows]);
 
   useFocusEffect(
     useCallback(() => {
@@ -76,11 +82,9 @@ export default function RecipeListScreen() {
             </ThemedText>
           </View>
         }
-        ItemSeparatorComponent={() => (
-          <View style={[styles.separator, { backgroundColor: theme.border }]} />
-        )}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
         renderItem={({ item }) => (
-          <RecipeListItem recipe={item} onPress={() => router.push(`/recipe/${item.id}`)} />
+          <RecipeCard recipe={item} onPress={() => router.push(`/recipe/${item.id}`)} />
         )}
       />
     </ThemedView>
@@ -97,14 +101,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   list: {
-    paddingBottom: Spacing.two,
+    paddingHorizontal: Spacing.three,
+    paddingBottom: Spacing.four,
     maxWidth: MaxContentWidth,
     width: '100%',
     alignSelf: 'center',
   },
   separator: {
-    height: StyleSheet.hairlineWidth,
-    marginHorizontal: Spacing.four,
+    height: Spacing.three,
   },
   noResults: {
     paddingHorizontal: Spacing.four,

@@ -50,7 +50,8 @@ export default function RecipeDetailScreen() {
     <ThemedView style={styles.container}>
       <Stack.Screen
         options={{
-          title: recipe.title,
+          // The hero already carries the title; repeating it in the bar is noise.
+          title: '',
           headerRight: () => (
             <Link href={`/recipe/${id}/edit`} style={styles.headerLink}>
               {t('common.edit')}

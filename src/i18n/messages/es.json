@@ -78,7 +78,9 @@
       "tips": "Consejos",
       "tags": "Tags",
       "source": "Fuente",
-      "stepImage": "Paso {{n}}"
+      "stepImage": "Paso {{n}}",
+      "keepAwake": "Mantener la pantalla encendida",
+      "keepAwakeHint": "Mientras cocinas, para que no se apague sola."
     },
     "delete": {
       "action": "Eliminar receta",
