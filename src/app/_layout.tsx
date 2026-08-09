@@ -58,6 +58,7 @@ export default function RootLayout() {
             <Stack.Screen name="recipe/new" options={{ title: t('recipes.new') }} />
             <Stack.Screen name="recipe/import" options={{ title: t('import.title') }} />
             <Stack.Screen name="more" options={{ title: t('more.title') }} />
+            <Stack.Screen name="ai" options={{ title: t('ai.title') }} />
             <Stack.Screen name="trash" options={{ title: t('trash.title') }} />
             <Stack.Screen name="backup" options={{ title: t('backup.title') }} />
           </Stack>

@@ -26,6 +26,11 @@ export default function MoreScreen() {
           onPress={() => router.push('/trash')}
         />
         <Entry
+          title={t('ai.title')}
+          description={t('ai.description')}
+          onPress={() => router.push('/ai')}
+        />
+        <Entry
           title={t('backup.title')}
           description={t('backup.exportDescription')}
           onPress={() => router.push('/backup')}
