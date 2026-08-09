@@ -27,6 +27,7 @@ function toFormValues(recipe: RecipeWithDetails): RecipeFormValues {
     tips: recipe.tips ?? '',
     tags: tagsToText(recipe.tags),
     coverImagePath: recipe.coverImagePath,
+    sourceUrl: recipe.sourceUrl,
   };
 }
 

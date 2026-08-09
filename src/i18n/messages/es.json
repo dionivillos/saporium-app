@@ -127,6 +127,24 @@
   "more": {
     "title": "Más"
   },
+  "import": {
+    "title": "Importar desde una web",
+    "description": "Pega la dirección de una receta y la traemos rellena para que la revises. Nada se guarda hasta que le des a guardar.",
+    "fromForm": "¿La receta está en una web? Impórtala",
+    "url": "Dirección de la receta",
+    "urlPlaceholder": "https://...",
+    "submit": "Traer la receta",
+    "working": "Buscando la receta...",
+    "privacy": "Tu móvil se conecta directamente con la web. No pasa por ningún servidor nuestro, porque no tenemos.",
+    "errors": {
+      "invalidUrl": "Esa dirección no parece válida.",
+      "insecure": "Solo se pueden importar direcciones https.",
+      "timeout": "La web ha tardado demasiado en responder.",
+      "unreachable": "No se ha podido acceder a esa web.",
+      "tooLarge": "La página es demasiado grande.",
+      "unsupported": "No he encontrado una receta en esa página."
+    }
+  },
   "trash": {
     "title": "Papelera",
     "description": "Las recetas eliminadas se guardan aquí hasta que las borres del todo.",
