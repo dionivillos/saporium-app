@@ -1,9 +1,10 @@
-import { AiError, requestStructured } from '@/lib/ai/client';
+import { AiError, requestStructured, type InlineImage } from '@/lib/ai/client';
 import type { AiCredentials } from '@/lib/ai/credentials';
 import { createRecipeSchema, type CreateRecipeInput } from '@/validations/recipe';
 
 /**
- * Turning a pasted blob of text into a recipe.
+ * Turning what the user brought — pasted text or a photo of a page — into a
+ * recipe.
  *
  * The model is asked to extract, never to cook: it may only report what the
  * text says. A model that helpfully invents "sal al gusto" produces a recipe
@@ -14,17 +15,26 @@ import { createRecipeSchema, type CreateRecipeInput } from '@/validations/recipe
  * model never reaches the database — the user does, by submitting the form.
  */
 
-const SYSTEM = [
-  'You extract a recipe from text the user pasted. You never invent.',
-  'Only report what the text actually says. If a quantity, a time, a number of',
+const RULES = [
+  'You never invent.',
+  'Only report what is actually there. If a quantity, a time, a number of',
   'servings or a difficulty is not stated, leave it null rather than guessing.',
-  'Never add ingredients or steps that are not in the text.',
-  'Keep the original wording and language of the text.',
+  'Never add ingredients or steps that are not there.',
+  'Keep the original wording and language.',
   'For each ingredient, rawText is the line exactly as written; name, quantity',
   'and unit are a best-effort split of it and may be null.',
   'Steps keep the order they appear in.',
   'Tags are lowercase, at most ten, and only if the text suggests them.',
-  'If the text is not a recipe at all, return isRecipe false and nothing else.',
+  'If there is no recipe at all, return isRecipe false and nothing else.',
+].join(' ');
+
+const FROM_TEXT = `You extract a recipe from text the user pasted. ${RULES}`;
+
+const FROM_IMAGE = [
+  'You extract a recipe from photographs of a page: a cookbook, a magazine, a',
+  'handwritten card. Transcribe what is legible and leave out what is not —',
+  'a guessed quantity is worse than a missing one.',
+  RULES,
 ].join(' ');
 
 const SCHEMA = {
@@ -150,21 +160,19 @@ function difficultyOf(value: unknown): CreateRecipeInput['difficulty'] {
   return value === 'easy' || value === 'medium' || value === 'hard' ? value : null;
 }
 
-/**
- * Asks the model for the recipe in the text and validates what comes back.
- * Throws `NotARecipeError` for a paste that is not a recipe, and `AiError`
- * when the model answered something unusable.
- */
-export async function recipeFromText(
+async function extract(
   credentials: AiCredentials,
-  pasted: string,
-  fetcher?: typeof globalThis.fetch
+  system: string,
+  prompt: string,
+  images: InlineImage[] | undefined,
+  fetcher: typeof globalThis.fetch | undefined
 ): Promise<CreateRecipeInput> {
   const answer = (await requestStructured(
     credentials,
     {
-      system: SYSTEM,
-      prompt: pasted,
+      system,
+      prompt,
+      images,
       schemaName: 'extracted_recipe',
       schema: SCHEMA as unknown as Record<string, unknown>,
     },
@@ -194,4 +202,31 @@ export async function recipeFromText(
   if (!parsed.success) throw new NotARecipeError();
 
   return parsed.data;
+}
+
+/**
+ * Asks the model for the recipe in a pasted text. Throws `NotARecipeError` when
+ * there is none, and `AiError` when the model answered something unusable.
+ */
+export function recipeFromText(
+  credentials: AiCredentials,
+  pasted: string,
+  fetcher?: typeof globalThis.fetch
+): Promise<CreateRecipeInput> {
+  return extract(credentials, FROM_TEXT, pasted, undefined, fetcher);
+}
+
+/** The same, from photographs of a page. Several, for a recipe that spans pages. */
+export function recipeFromImages(
+  credentials: AiCredentials,
+  images: InlineImage[],
+  fetcher?: typeof globalThis.fetch
+): Promise<CreateRecipeInput> {
+  return extract(
+    credentials,
+    FROM_IMAGE,
+    'Extract the recipe shown in these photographs.',
+    images,
+    fetcher
+  );
 }

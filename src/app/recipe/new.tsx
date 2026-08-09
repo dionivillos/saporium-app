@@ -101,6 +101,17 @@ export default function NewRecipeScreen() {
           </ThemedText>
         </Pressable>
       )}
+      {initial === null && hasKey && (
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.push('/recipe/scan')}
+          style={styles.notice}
+        >
+          <ThemedText type="small" style={styles.link}>
+            {t('scan.fromForm')}
+          </ThemedText>
+        </Pressable>
+      )}
       <RecipeForm
         key={generation}
         initialValues={initial ?? undefined}
