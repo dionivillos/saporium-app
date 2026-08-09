@@ -40,6 +40,8 @@ export type RecipeFormValues = {
   tips: string;
   tags: string;
   coverImagePath: string | null;
+  /** Where the recipe came from. Carried, not edited. */
+  sourceUrl: string | null;
 };
 
 export const EMPTY_FORM: RecipeFormValues = {
@@ -55,6 +57,7 @@ export const EMPTY_FORM: RecipeFormValues = {
   tips: '',
   tags: '',
   coverImagePath: null,
+  sourceUrl: null,
 };
 
 export function toCreateInput(values: RecipeFormValues): CreateRecipeInput {
@@ -70,6 +73,7 @@ export function toCreateInput(values: RecipeFormValues): CreateRecipeInput {
     servingsMax: parseOptionalNumber(values.servingsMax),
     tips: values.tips.trim() || null,
     coverImagePath: values.coverImagePath,
+    sourceUrl: values.sourceUrl,
     ingredients: parseIngredientLines(values.ingredients),
     steps: parseStepText(values.steps),
     tags: parseTagText(values.tags),
