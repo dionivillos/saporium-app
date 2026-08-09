@@ -159,5 +159,31 @@
     "deleteForever": "Eliminar definitivamente",
     "deleteForeverTitle": "¿Eliminar definitivamente?",
     "deleteForeverDescription": "«{{title}}» se borrará para siempre. Esta acción no se puede deshacer."
+  },
+  "ai": {
+    "title": "IA (opcional)",
+    "description": "Saporium funciona entero sin IA. Si quieres usarla, traes tu propia clave del proveedor y tu móvil habla directamente con él.",
+    "provider": "Proveedor",
+    "providers": {
+      "anthropic": "Anthropic",
+      "openai": "OpenAI"
+    },
+    "key": "Clave de API",
+    "keyPlaceholder": "Pega aquí tu clave",
+    "save": "Guardar clave",
+    "test": "Probar la clave",
+    "testing": "Probando...",
+    "testOk": "La clave funciona.",
+    "remove": "Quitar la clave",
+    "removeTitle": "¿Quitar la clave?",
+    "removeDescription": "Se borrará del llavero del móvil. Podrás volver a pegarla cuando quieras.",
+    "privacy": "La clave se guarda en el llavero del dispositivo. No entra en la base de datos ni en las copias de seguridad, y no sale de tu móvil salvo hacia tu proveedor.",
+    "errors": {
+      "unauthorized": "El proveedor no acepta esa clave.",
+      "rateLimited": "Tu proveedor ha limitado las peticiones. Prueba en un rato.",
+      "unreachable": "No se ha podido contactar con el proveedor.",
+      "timeout": "El proveedor ha tardado demasiado en responder.",
+      "badResponse": "El proveedor ha contestado algo que no entiendo."
+    }
   }
 }

@@ -49,7 +49,8 @@
           "photosPermission": "Saporium usa tus fotos para ilustrar tus recetas. Las imágenes se guardan solo en tu dispositivo.",
           "cameraPermission": "Saporium usa la cámara para fotografiar tus recetas. Las imágenes se guardan solo en tu dispositivo."
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,
