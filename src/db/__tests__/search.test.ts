@@ -7,6 +7,7 @@ import {
   NO_FILTERS,
   softDeleteRecipe,
   type RecipeFilters,
+  type RecipeSort,
 } from '@/db/recipes';
 import { createTestDatabase } from '@/test-utils/db';
 import type { CreateRecipeInput } from '@/validations/recipe';
@@ -114,6 +115,63 @@ describe('filters', () => {
   it('composes both filters', () => {
     expect(search({ difficulty: 'medium', tag: 'guiso' })).toEqual(['Lentejas']);
     expect(search({ difficulty: 'easy', tag: 'guiso' })).toEqual([]);
+  });
+});
+
+describe('sorting', () => {
+  function titlesSortedBy(sort: RecipeSort): string[] {
+    return listRecipes(db, NO_FILTERS, sort).map((recipe) => recipe.title);
+  }
+
+  const base = { ingredients: [{ name: 'x' }], steps: [{ content: 'y' }], tags: [] };
+
+  it('orders alphabetically, folding accents so Ñ does not land after Z', () => {
+    createRecipe(db, { ...base, title: 'Sopa' });
+    createRecipe(db, { ...base, title: 'Ñoquis' });
+    createRecipe(db, { ...base, title: 'arroz' });
+
+    expect(titlesSortedBy('title')).toEqual(['arroz', 'Ñoquis', 'Sopa']);
+  });
+
+  it('orders by the time a recipe actually takes, adding prep and cook', () => {
+    createRecipe(db, { ...base, title: 'Larga', totalTimeMinutes: 90 });
+    createRecipe(db, { ...base, title: 'Corta', prepTimeMinutes: 5, cookTimeMinutes: 10 });
+    createRecipe(db, { ...base, title: 'Media', prepTimeMinutes: 30 });
+
+    expect(titlesSortedBy('time')).toEqual(['Corta', 'Media', 'Larga']);
+  });
+
+  it('puts recipes with no time at the end, because unknown is not zero', () => {
+    createRecipe(db, { ...base, title: 'Sin tiempo' });
+    createRecipe(db, { ...base, title: 'Con tiempo', totalTimeMinutes: 45 });
+
+    expect(titlesSortedBy('time')).toEqual(['Con tiempo', 'Sin tiempo']);
+  });
+
+  it('orders by servings, breaking ties by title', () => {
+    createRecipe(db, { ...base, title: 'Banquete', servingsMin: 12 });
+    createRecipe(db, { ...base, title: 'Pareja', servingsMin: 2 });
+    createRecipe(db, { ...base, title: 'Almuerzo', servingsMin: 2 });
+
+    expect(titlesSortedBy('servings')).toEqual(['Almuerzo', 'Pareja', 'Banquete']);
+  });
+
+  it('composes with filters and search', () => {
+    createRecipe(db, { ...base, title: 'Sopa fácil', difficulty: 'easy', totalTimeMinutes: 60 });
+    createRecipe(db, { ...base, title: 'Sopa rápida', difficulty: 'easy', totalTimeMinutes: 10 });
+    createRecipe(db, { ...base, title: 'Sopa difícil', difficulty: 'hard', totalTimeMinutes: 5 });
+
+    const result = listRecipes(db, { ...NO_FILTERS, search: 'sopa', difficulty: 'easy' }, 'time');
+
+    expect(result.map((recipe) => recipe.title)).toEqual(['Sopa rápida', 'Sopa fácil']);
+  });
+
+  it('excludes trashed recipes whatever the order', () => {
+    const id = createRecipe(db, { ...base, title: 'Borrada' });
+    createRecipe(db, { ...base, title: 'Viva' });
+    softDeleteRecipe(db, id);
+
+    expect(titlesSortedBy('title')).toEqual(['Viva']);
   });
 });
 

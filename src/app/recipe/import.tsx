@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
@@ -30,6 +30,7 @@ export default function ImportRecipeScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const theme = useTheme();
+  const { returnToForm } = useLocalSearchParams<{ returnToForm?: string }>();
 
   const [url, setUrl] = useState('');
   const [busy, setBusy] = useState(false);
@@ -50,7 +51,11 @@ export default function ImportRecipeScreen() {
 
       // Nothing is saved here: the form is where the user accepts it.
       setPendingImport(toFormValues(recipe, target));
-      router.replace('/recipe/new');
+
+      // Coming from the form means it is still underneath, waiting to be
+      // filled in; coming from anywhere else there is no form to go back to.
+      if (returnToForm === '1') router.back();
+      else router.replace('/recipe/new');
     } catch (error) {
       setFailure(error instanceof PageFetchError ? error.reason : 'unreachable');
     } finally {
@@ -102,10 +107,6 @@ export default function ImportRecipeScreen() {
             <ThemedText type="smallBold">{t('import.submit')}</ThemedText>
           )}
         </Pressable>
-
-        <ThemedText type="small" themeColor="textSecondary">
-          {t('import.privacy')}
-        </ThemedText>
       </ScrollView>
     </ThemedView>
   );

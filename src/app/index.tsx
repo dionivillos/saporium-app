@@ -11,11 +11,13 @@ import { ThemedView } from '@/components/themed-view';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
 import { db } from '@/db/client';
 import {
+  DEFAULT_SORT,
   listUsedTags,
   NO_FILTERS,
   recipeListQuery,
   toListEntry,
   type RecipeFilters,
+  type RecipeSort,
 } from '@/db/recipes';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
 
@@ -24,16 +26,18 @@ export default function RecipeListScreen() {
   const router = useRouter();
 
   const [filters, setFilters] = useState<RecipeFilters>(NO_FILTERS);
+  const [sort, setSort] = useState<RecipeSort>(DEFAULT_SORT);
   const [tags, setTags] = useState<string[]>([]);
 
   // The input keeps every keystroke; only the query waits for the typing to settle.
   const search = useDebouncedValue(filters.search);
   const applied = useMemo<RecipeFilters>(() => ({ ...filters, search }), [filters, search]);
 
-  const { data: rows } = useLiveQuery(recipeListQuery(db, applied), [
+  const { data: rows } = useLiveQuery(recipeListQuery(db, applied, sort), [
     applied.search,
     applied.difficulty,
     applied.tag,
+    sort,
   ]);
 
   const recipes = useMemo(() => rows.map(toListEntry), [rows]);
@@ -73,7 +77,13 @@ export default function RecipeListScreen() {
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
         ListHeaderComponent={
-          <RecipeFilterBar filters={filters} onChange={setFilters} tags={tags} />
+          <RecipeFilterBar
+            filters={filters}
+            onChange={setFilters}
+            sort={sort}
+            onSortChange={setSort}
+            tags={tags}
+          />
         }
         ListEmptyComponent={
           <View style={styles.noResults}>
