@@ -10,6 +10,7 @@ import { Spacing } from '@/constants/theme';
 import { db } from '@/db/client';
 import { createRecipe } from '@/db/recipes';
 import { clearDraft, draftKey, loadDraft, saveDraft } from '@/lib/draft';
+import { loadCredentials } from '@/lib/ai/credentials';
 import { takePendingImport } from '@/lib/pending-import';
 import type { CreateRecipeInput } from '@/validations/recipe';
 
@@ -25,6 +26,8 @@ export default function NewRecipeScreen() {
   // remount it rather than hope the prop is picked up.
   const [generation, setGeneration] = useState(0);
   const imported = useRef(false);
+  // Store rule and our own principle 4: no AI surface without a key.
+  const [hasKey, setHasKey] = useState(false);
 
   // Also runs on the way back from the import screen, which leaves this one
   // mounted underneath.
@@ -40,6 +43,10 @@ export default function NewRecipeScreen() {
       setGeneration((current) => current + 1);
     }, [])
   );
+
+  useEffect(() => {
+    void loadCredentials().then((credentials) => setHasKey(credentials !== null));
+  }, []);
 
   useEffect(() => {
     void loadDraft(KEY).then((draft) => {
@@ -80,6 +87,17 @@ export default function NewRecipeScreen() {
         >
           <ThemedText type="small" style={styles.link}>
             {t('import.fromForm')}
+          </ThemedText>
+        </Pressable>
+      )}
+      {initial === null && hasKey && (
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.push('/recipe/paste')}
+          style={styles.notice}
+        >
+          <ThemedText type="small" style={styles.link}>
+            {t('paste.fromForm')}
           </ThemedText>
         </Pressable>
       )}

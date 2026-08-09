@@ -185,5 +185,20 @@
       "timeout": "El proveedor ha tardado demasiado en responder.",
       "badResponse": "El proveedor ha contestado algo que no entiendo."
     }
+  },
+  "paste": {
+    "title": "Pegar una receta",
+    "fromForm": "¿La tienes escrita en un mensaje? Pégala",
+    "description": "Pega el texto tal cual: un mensaje, un trozo de blog, unas notas. Lo ordenamos y lo traemos al formulario para que lo revises.",
+    "text": "Texto de la receta",
+    "textPlaceholder": "Pega aquí el texto...",
+    "submit": "Ordenar el texto",
+    "working": "Leyendo la receta...",
+    "cost": "Esto usa tu clave, así que lo paga tu cuenta del proveedor.",
+    "needsKey": "Para esto hace falta una clave de IA, y todavía no has configurado ninguna.",
+    "configureKey": "Configurar la clave",
+    "errors": {
+      "notARecipe": "No he encontrado una receta en ese texto."
+    }
   }
 }
