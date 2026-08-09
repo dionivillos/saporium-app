@@ -200,5 +200,21 @@
     "errors": {
       "notARecipe": "No he encontrado una receta en ese texto."
     }
+  },
+  "scan": {
+    "title": "Foto de una receta",
+    "fromForm": "¿La tienes en un libro? Hazle una foto",
+    "description": "Haz fotos a la página o elígelas de la galería. Se leen y la receta llega al formulario para que la revises.",
+    "take": "Hacer foto",
+    "choose": "De la galería",
+    "clear": "Empezar de nuevo",
+    "submit": "Leer la receta",
+    "working": "Leyendo la foto...",
+    "cost": "Esto usa tu clave, así que lo paga tu cuenta del proveedor. Las fotos se reducen antes de enviarlas.",
+    "needsKey": "Para esto hace falta una clave de IA, y todavía no has configurado ninguna.",
+    "errors": {
+      "notARecipe": "No he podido leer una receta en esas fotos.",
+      "unreadable": "No se ha podido preparar la foto."
+    }
   }
 }

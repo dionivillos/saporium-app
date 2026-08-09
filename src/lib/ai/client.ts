@@ -29,12 +29,19 @@ export class AiError extends Error {
   }
 }
 
+/** A photo to reason about, already downscaled and encoded by the caller. */
+export type InlineImage = {
+  mediaType: string;
+  base64: string;
+};
+
 export type StructuredRequest = {
   system: string;
   prompt: string;
   /** JSON Schema for the object wanted back. */
   schema: Record<string, unknown>;
   schemaName: string;
+  images?: InlineImage[];
 };
 
 type Fetch = typeof globalThis.fetch;
@@ -136,7 +143,18 @@ function anthropicBody(request: StructuredRequest): unknown {
       { name: request.schemaName, description: request.system, input_schema: request.schema },
     ],
     tool_choice: { type: 'tool', name: request.schemaName },
-    messages: [{ role: 'user', content: request.prompt }],
+    messages: [
+      {
+        role: 'user',
+        content: [
+          ...(request.images ?? []).map((image) => ({
+            type: 'image',
+            source: { type: 'base64', media_type: image.mediaType, data: image.base64 },
+          })),
+          { type: 'text', text: request.prompt },
+        ],
+      },
+    ],
   };
 }
 
@@ -164,7 +182,16 @@ function openAiBody(request: StructuredRequest): unknown {
     },
     messages: [
       { role: 'system', content: request.system },
-      { role: 'user', content: request.prompt },
+      {
+        role: 'user',
+        content: [
+          ...(request.images ?? []).map((image) => ({
+            type: 'image_url',
+            image_url: { url: `data:${image.mediaType};base64,${image.base64}` },
+          })),
+          { type: 'text', text: request.prompt },
+        ],
+      },
     ],
   };
 }

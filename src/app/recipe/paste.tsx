@@ -10,7 +10,7 @@ import { MaxContentWidth, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { AiError, type AiFailure } from '@/lib/ai/client';
 import { loadCredentials, type AiCredentials } from '@/lib/ai/credentials';
-import { NotARecipeError, recipeFromText } from '@/lib/ai/recipe-from-text';
+import { NotARecipeError, recipeFromText } from '@/lib/ai/extract-recipe';
 import { toFormValues } from '@/lib/imported-recipe';
 import { setPendingImport } from '@/lib/pending-import';
 

@@ -1,6 +1,6 @@
 import { AiError, type AiFailure } from '@/lib/ai/client';
 import type { AiCredentials } from '@/lib/ai/credentials';
-import { NotARecipeError, recipeFromText } from '@/lib/ai/recipe-from-text';
+import { NotARecipeError, recipeFromImages, recipeFromText } from '@/lib/ai/extract-recipe';
 
 const credentials: AiCredentials = { provider: 'anthropic', apiKey: 'sk-ant-test' };
 
@@ -164,6 +164,50 @@ describe('recipeFromText', () => {
     );
   });
 
+  it('sends photographs inline and still asks for the same object', async () => {
+    const calls: RequestInit[] = [];
+    const fetcher = ((_url: string, init: RequestInit) => {
+      calls.push(init);
+      return Promise.resolve({
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve({ content: [{ type: 'tool_use', input: lentejas }] }),
+      } as unknown as Response);
+    }) as unknown as typeof fetch;
+
+    const recipe = await recipeFromImages(
+      credentials,
+      [
+        { mediaType: 'image/jpeg', base64: 'AAAA' },
+        { mediaType: 'image/jpeg', base64: 'BBBB' },
+      ],
+      fetcher
+    );
+
+    expect(recipe.title).toBe('Lentejas de la abuela');
+
+    const body = JSON.parse(String(calls[0]?.body)) as {
+      system: string;
+      messages: { content: { type: string; source?: { data: string } }[] }[];
+    };
+    const content = body.messages[0]?.content ?? [];
+
+    expect(content.filter((part) => part.type === 'image')).toHaveLength(2);
+    expect(content[0]?.source?.data).toBe('AAAA');
+    // The text part comes last, after what it refers to.
+    expect(content.at(-1)?.type).toBe('text');
+    expect(body.system).toContain('never invent');
+  });
+
+  it('applies the same rejections to a photograph as to a paste', async () => {
+    const answer = { ...lentejas, isRecipe: false };
+    const image = [{ mediaType: 'image/jpeg', base64: 'AAAA' }];
+
+    expect(
+      await failureOf(() => recipeFromImages(credentials, image, vendorReturning(answer)))
+    ).toBe('not-a-recipe');
+  });
+
   it('sends the pasted text as the prompt and asks the model not to invent', async () => {
     const calls: RequestInit[] = [];
     const fetcher = ((_url: string, init: RequestInit) => {
@@ -179,9 +223,9 @@ describe('recipeFromText', () => {
 
     const body = JSON.parse(String(calls[0]?.body)) as {
       system: string;
-      messages: { content: string }[];
+      messages: { content: { type: string; text?: string }[] }[];
     };
-    expect(body.messages[0]?.content).toBe('mis lentejas caseras');
+    expect(body.messages[0]?.content).toEqual([{ type: 'text', text: 'mis lentejas caseras' }]);
     expect(body.system).toContain('never invent');
   });
 });
