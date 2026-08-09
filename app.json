@@ -33,10 +33,11 @@
         {
           "backgroundColor": "#F6F1EA",
           "dark": {
-            "backgroundColor": "#151312"
+            "backgroundColor": "#151312",
+            "image": "./assets/images/splash-icon-dark.png"
           },
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 76
+          "imageWidth": 96
         }
       ],
       "expo-sqlite",

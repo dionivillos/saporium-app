@@ -28,14 +28,7 @@ export function RecipeDetail({ recipe, onDelete }: Props) {
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
       {/* Full-bleed: the hero is the one place the content margin gets in the way. */}
-      <RecipeCover
-        id={recipe.id}
-        title={recipe.title}
-        coverImagePath={recipe.coverImagePath}
-        tags={recipe.tags}
-        style={styles.cover}
-        glyphSize={72}
-      />
+      <RecipeCover coverImagePath={recipe.coverImagePath} style={styles.cover} markSize={96} />
 
       <View style={styles.body}>
         <View style={styles.header}>

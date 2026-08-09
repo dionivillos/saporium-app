@@ -38,13 +38,7 @@ export function RecipeCard({ recipe, onPress }: Props) {
         },
       ]}
     >
-      <RecipeCover
-        id={recipe.id}
-        title={recipe.title}
-        coverImagePath={recipe.coverImagePath}
-        tags={recipe.tags}
-        style={styles.cover}
-      />
+      <RecipeCover coverImagePath={recipe.coverImagePath} style={styles.cover} />
 
       <View style={styles.body}>
         <ThemedText style={styles.title} numberOfLines={2}>

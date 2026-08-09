@@ -207,6 +207,11 @@ export type RecipeFilters = {
 
 export const NO_FILTERS: RecipeFilters = { search: '', difficulty: null, tag: null };
 
+/** How many filters are narrowing the list, search aside — it has its own field. */
+export function activeFilterCount(filters: RecipeFilters): number {
+  return (filters.difficulty === null ? 0 : 1) + (filters.tag === null ? 0 : 1);
+}
+
 /**
  * Applies the same folding as `foldForSearch` inside SQLite. Nested `replace`
  * calls are unlovely, but they keep matching in the database — the alternative

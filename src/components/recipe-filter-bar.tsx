@@ -1,33 +1,30 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
+import { RecipeFilterSheet } from '@/components/recipe-filter-sheet';
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
-import type { RecipeFilters } from '@/db/recipes';
-import type { Recipe } from '@/db/schema';
+import { activeFilterCount, NO_FILTERS, type RecipeFilters } from '@/db/recipes';
 import { useTheme } from '@/hooks/use-theme';
-
-const DIFFICULTIES = ['easy', 'medium', 'hard'] as const;
 
 type Props = {
   filters: RecipeFilters;
   onChange: (filters: RecipeFilters) => void;
-  /** Tags in use, so the row never offers a filter that matches nothing. */
+  /** Tags in use, so the sheet never offers a filter that matches nothing. */
   tags: string[];
 };
 
+/**
+ * Search is always visible because it is what gets used; the rest lives behind
+ * one button that says how many filters are on, and clears them all at once.
+ */
 export function RecipeFilterBar({ filters, onChange, tags }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
+  const [sheetOpen, setSheetOpen] = useState(false);
 
-  /** Tapping the active value clears it, so a filter needs no separate reset. */
-  function toggleDifficulty(value: Recipe['difficulty']) {
-    onChange({ ...filters, difficulty: filters.difficulty === value ? null : value });
-  }
-
-  function toggleTag(value: string) {
-    onChange({ ...filters, tag: filters.tag === value ? null : value });
-  }
+  const active = activeFilterCount(filters);
 
   return (
     <View style={styles.bar}>
@@ -43,59 +40,46 @@ export function RecipeFilterBar({ filters, onChange, tags }: Props) {
         style={[styles.input, { color: theme.text, backgroundColor: theme.backgroundElement }]}
       />
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={styles.chips}
-      >
-        {DIFFICULTIES.map((difficulty) => (
-          <Chip
-            key={difficulty}
-            label={t(`recipes.difficulty.${difficulty}`)}
-            selected={filters.difficulty === difficulty}
-            onPress={() => toggleDifficulty(difficulty)}
-          />
-        ))}
-        {tags.map((tag) => (
-          <Chip
-            key={tag}
-            label={`#${tag}`}
-            selected={filters.tag === tag}
-            onPress={() => toggleTag(tag)}
-          />
-        ))}
-      </ScrollView>
+      <View style={styles.actions}>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => setSheetOpen(true)}
+          style={({ pressed }) => [
+            styles.button,
+            {
+              backgroundColor: pressed ? theme.backgroundSelected : theme.backgroundElement,
+              borderColor: active > 0 ? theme.text : 'transparent',
+            },
+          ]}
+        >
+          <ThemedText type="small">
+            {active > 0
+              ? t('recipes.search.filtersActive', { count: active })
+              : t('recipes.search.filters')}
+          </ThemedText>
+        </Pressable>
+
+        {active > 0 && (
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => onChange({ ...NO_FILTERS, search: filters.search })}
+            hitSlop={Spacing.two}
+          >
+            <ThemedText type="small" themeColor="textSecondary">
+              {t('recipes.search.clear')}
+            </ThemedText>
+          </Pressable>
+        )}
+      </View>
+
+      <RecipeFilterSheet
+        visible={sheetOpen}
+        filters={filters}
+        tags={tags}
+        onChange={onChange}
+        onClose={() => setSheetOpen(false)}
+      />
     </View>
-  );
-}
-
-function Chip({
-  label,
-  selected,
-  onPress,
-}: {
-  label: string;
-  selected: boolean;
-  onPress: () => void;
-}) {
-  const theme = useTheme();
-
-  return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityState={{ selected }}
-      onPress={onPress}
-      style={({ pressed }) => [
-        styles.chip,
-        {
-          backgroundColor: selected || pressed ? theme.backgroundSelected : theme.backgroundElement,
-          borderColor: selected ? theme.text : 'transparent',
-        },
-      ]}
-    >
-      <ThemedText type="small">{label}</ThemedText>
-    </Pressable>
   );
 }
 
@@ -112,12 +96,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 22,
   },
-  chips: {
+  actions: {
     flexDirection: 'row',
-    gap: Spacing.two,
-    paddingRight: Spacing.three,
+    alignItems: 'center',
+    gap: Spacing.three,
   },
-  chip: {
+  button: {
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.one + Spacing.half,
     borderRadius: 999,

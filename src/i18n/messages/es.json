@@ -90,8 +90,11 @@
     },
     "search": {
       "placeholder": "Buscar en mis recetas...",
-      "allDifficulties": "Cualquier dificultad",
-      "allTags": "Cualquier tag",
+      "filters": "Filtros",
+      "filtersActive_one": "Filtros · {{count}}",
+      "filtersActive_other": "Filtros · {{count}}",
+      "clear": "Quitar filtros",
+      "noTags": "Aún no has usado ningún tag.",
       "noResults": "No hay recetas que coincidan con tu búsqueda"
     },
     "created": "Receta guardada"

@@ -1,32 +1,26 @@
 import { Image } from 'expo-image';
-import { LinearGradient } from 'expo-linear-gradient';
-import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
+import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 
+import { useTheme } from '@/hooks/use-theme';
 import { photoUri } from '@/lib/photos';
-import { placeholderFor } from '@/lib/recipe-placeholder';
+
+const LOGO = require('../../assets/images/logo-mark.png');
 
 type Props = {
-  id: string;
-  title: string;
   coverImagePath: string | null;
-  tags?: readonly string[];
   style?: StyleProp<ViewStyle>;
-  /** Scales the glyph; the hero wants a much bigger one than a card. */
-  glyphSize?: number;
+  /** Side of the mark in pixels; the hero wants a bigger one than a card. */
+  markSize?: number;
 };
 
 /**
- * The photo when there is one, and otherwise art derived from the recipe itself
- * so an empty collection still looks like a cookbook.
+ * The photo when there is one, and otherwise the app's own mark on a neutral
+ * tone. Deliberately identical for every recipe: a collection of photo-less
+ * cards should read as a quiet, consistent surface, not as decoration.
  */
-export function RecipeCover({
-  id,
-  title,
-  coverImagePath,
-  tags = [],
-  style,
-  glyphSize = 44,
-}: Props) {
+export function RecipeCover({ coverImagePath, style, markSize = 72 }: Props) {
+  const theme = useTheme();
+
   // The photo and the placeholder share one wrapper so callers can style either
   // the same way; an Image and a View do not accept the same style type.
   if (coverImagePath !== null) {
@@ -43,21 +37,22 @@ export function RecipeCover({
     );
   }
 
-  const { colors, glyph } = placeholderFor(id, tags, title);
-
   return (
-    <View style={[styles.frame, style]}>
-      <LinearGradient
-        colors={colors}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.gradient}
-      >
-        {/* Decorative: the glyph echoes the tags, which are written out anyway. */}
-        <Text style={[styles.glyph, { fontSize: glyphSize }]} accessibilityElementsHidden>
-          {glyph}
-        </Text>
-      </LinearGradient>
+    <View
+      style={[
+        styles.frame,
+        style,
+        styles.placeholder,
+        { backgroundColor: theme.backgroundSelected },
+      ]}
+    >
+      <Image
+        source={LOGO}
+        style={[styles.mark, { width: markSize, height: markSize }]}
+        contentFit="contain"
+        tintColor={theme.textSecondary}
+        accessibilityElementsHidden
+      />
     </View>
   );
 }
@@ -70,12 +65,11 @@ const styles = StyleSheet.create({
   fill: {
     flex: 1,
   },
-  gradient: {
-    flex: 1,
+  placeholder: {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  glyph: {
-    opacity: 0.9,
+  mark: {
+    opacity: 0.7,
   },
 });
