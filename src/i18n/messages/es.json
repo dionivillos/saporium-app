@@ -90,19 +90,59 @@
     },
     "search": {
       "placeholder": "Buscar en mis recetas...",
-      "filters": "Filtros",
-      "filtersActive_one": "Filtros · {{count}}",
-      "filtersActive_other": "Filtros · {{count}}",
+      "filters": "Filtrar",
+      "filtersActive_one": "Filtrar · {{count}}",
+      "filtersActive_other": "Filtrar · {{count}}",
       "clear": "Quitar filtros",
       "noTags": "Aún no has usado ningún tag.",
       "noResults": "No hay recetas que coincidan con tu búsqueda"
     },
     "sort": {
       "label": "Ordenar",
-      "recent": "Más recientes",
-      "title": "Alfabético",
-      "time": "Más rápidas",
-      "servings": "Menos raciones"
+      "field": "Ordenar por",
+      "direction": "De qué forma",
+      "fields": {
+        "updated": "Fecha",
+        "title": "Nombre",
+        "time": "Tiempo",
+        "servings": "Raciones"
+      },
+      "directions": {
+        "updated": {
+          "asc": "Más antiguas primero",
+          "desc": "Más recientes primero"
+        },
+        "title": {
+          "asc": "De la A a la Z",
+          "desc": "De la Z a la A"
+        },
+        "time": {
+          "asc": "Más rápidas primero",
+          "desc": "Más lentas primero"
+        },
+        "servings": {
+          "asc": "Menos raciones primero",
+          "desc": "Más raciones primero"
+        }
+      },
+      "summary": {
+        "updated": {
+          "asc": "Más antiguas",
+          "desc": "Más recientes"
+        },
+        "title": {
+          "asc": "A-Z",
+          "desc": "Z-A"
+        },
+        "time": {
+          "asc": "Más rápidas",
+          "desc": "Más lentas"
+        },
+        "servings": {
+          "asc": "Menos raciones",
+          "desc": "Más raciones"
+        }
+      }
     },
     "created": "Receta guardada"
   },

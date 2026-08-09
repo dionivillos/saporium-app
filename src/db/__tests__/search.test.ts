@@ -1,3 +1,5 @@
+import { eq } from 'drizzle-orm';
+
 import type { Database } from '@/db/client';
 import {
   activeFilterCount,
@@ -9,6 +11,7 @@ import {
   type RecipeFilters,
   type RecipeSort,
 } from '@/db/recipes';
+import { recipes } from '@/db/schema';
 import { createTestDatabase } from '@/test-utils/db';
 import type { CreateRecipeInput } from '@/validations/recipe';
 
@@ -130,7 +133,23 @@ describe('sorting', () => {
     createRecipe(db, { ...base, title: 'Ñoquis' });
     createRecipe(db, { ...base, title: 'arroz' });
 
-    expect(titlesSortedBy('title')).toEqual(['arroz', 'Ñoquis', 'Sopa']);
+    expect(titlesSortedBy({ field: 'title', direction: 'asc' })).toEqual([
+      'arroz',
+      'Ñoquis',
+      'Sopa',
+    ]);
+  });
+
+  it('reverses alphabetical order on request', () => {
+    createRecipe(db, { ...base, title: 'Sopa' });
+    createRecipe(db, { ...base, title: 'Ñoquis' });
+    createRecipe(db, { ...base, title: 'arroz' });
+
+    expect(titlesSortedBy({ field: 'title', direction: 'desc' })).toEqual([
+      'Sopa',
+      'Ñoquis',
+      'arroz',
+    ]);
   });
 
   it('orders by the time a recipe actually takes, adding prep and cook', () => {
@@ -138,14 +157,39 @@ describe('sorting', () => {
     createRecipe(db, { ...base, title: 'Corta', prepTimeMinutes: 5, cookTimeMinutes: 10 });
     createRecipe(db, { ...base, title: 'Media', prepTimeMinutes: 30 });
 
-    expect(titlesSortedBy('time')).toEqual(['Corta', 'Media', 'Larga']);
+    expect(titlesSortedBy({ field: 'time', direction: 'asc' })).toEqual([
+      'Corta',
+      'Media',
+      'Larga',
+    ]);
+  });
+
+  it('finds the longest recipes when asked the other way round', () => {
+    createRecipe(db, { ...base, title: 'Larga', totalTimeMinutes: 90 });
+    createRecipe(db, { ...base, title: 'Corta', prepTimeMinutes: 5, cookTimeMinutes: 10 });
+
+    expect(titlesSortedBy({ field: 'time', direction: 'desc' })).toEqual(['Larga', 'Corta']);
   });
 
   it('puts recipes with no time at the end, because unknown is not zero', () => {
     createRecipe(db, { ...base, title: 'Sin tiempo' });
     createRecipe(db, { ...base, title: 'Con tiempo', totalTimeMinutes: 45 });
 
-    expect(titlesSortedBy('time')).toEqual(['Con tiempo', 'Sin tiempo']);
+    expect(titlesSortedBy({ field: 'time', direction: 'asc' })).toEqual([
+      'Con tiempo',
+      'Sin tiempo',
+    ]);
+  });
+
+  it('keeps recipes with no time last even when sorting the other way', () => {
+    createRecipe(db, { ...base, title: 'Sin tiempo' });
+    createRecipe(db, { ...base, title: 'Con tiempo', totalTimeMinutes: 45 });
+
+    // An unknown time is not zero minutes, and it is not three hours either.
+    expect(titlesSortedBy({ field: 'time', direction: 'desc' })).toEqual([
+      'Con tiempo',
+      'Sin tiempo',
+    ]);
   });
 
   it('orders by servings, breaking ties by title', () => {
@@ -153,7 +197,25 @@ describe('sorting', () => {
     createRecipe(db, { ...base, title: 'Pareja', servingsMin: 2 });
     createRecipe(db, { ...base, title: 'Almuerzo', servingsMin: 2 });
 
-    expect(titlesSortedBy('servings')).toEqual(['Almuerzo', 'Pareja', 'Banquete']);
+    expect(titlesSortedBy({ field: 'servings', direction: 'asc' })).toEqual([
+      'Almuerzo',
+      'Pareja',
+      'Banquete',
+    ]);
+  });
+
+  it('orders by date in both directions', () => {
+    const first = createRecipe(db, { ...base, title: 'Primera' });
+    createRecipe(db, { ...base, title: 'Segunda' });
+
+    // Forced apart: created back to back they land in the same millisecond.
+    db.update(recipes)
+      .set({ updatedAt: new Date('2020-01-01') })
+      .where(eq(recipes.id, first))
+      .run();
+
+    expect(titlesSortedBy({ field: 'updated', direction: 'desc' })).toEqual(['Segunda', 'Primera']);
+    expect(titlesSortedBy({ field: 'updated', direction: 'asc' })).toEqual(['Primera', 'Segunda']);
   });
 
   it('composes with filters and search', () => {
@@ -161,7 +223,14 @@ describe('sorting', () => {
     createRecipe(db, { ...base, title: 'Sopa rápida', difficulty: 'easy', totalTimeMinutes: 10 });
     createRecipe(db, { ...base, title: 'Sopa difícil', difficulty: 'hard', totalTimeMinutes: 5 });
 
-    const result = listRecipes(db, { ...NO_FILTERS, search: 'sopa', difficulty: 'easy' }, 'time');
+    const result = listRecipes(
+      db,
+      { ...NO_FILTERS, search: 'sopa', difficulty: 'easy' },
+      {
+        field: 'time',
+        direction: 'asc',
+      }
+    );
 
     expect(result.map((recipe) => recipe.title)).toEqual(['Sopa rápida', 'Sopa fácil']);
   });
@@ -171,7 +240,7 @@ describe('sorting', () => {
     createRecipe(db, { ...base, title: 'Viva' });
     softDeleteRecipe(db, id);
 
-    expect(titlesSortedBy('title')).toEqual(['Viva']);
+    expect(titlesSortedBy({ field: 'title', direction: 'asc' })).toEqual(['Viva']);
   });
 });
 
