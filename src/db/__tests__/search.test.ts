@@ -1,5 +1,6 @@
 import type { Database } from '@/db/client';
 import {
+  activeFilterCount,
   createRecipe,
   listRecipes,
   listUsedTags,
@@ -113,6 +114,18 @@ describe('filters', () => {
   it('composes both filters', () => {
     expect(search({ difficulty: 'medium', tag: 'guiso' })).toEqual(['Lentejas']);
     expect(search({ difficulty: 'easy', tag: 'guiso' })).toEqual([]);
+  });
+});
+
+describe('activeFilterCount', () => {
+  it('ignores the search term, which has its own field in the UI', () => {
+    expect(activeFilterCount({ ...NO_FILTERS, search: 'lentejas' })).toBe(0);
+  });
+
+  it('counts each narrowing filter', () => {
+    expect(activeFilterCount(NO_FILTERS)).toBe(0);
+    expect(activeFilterCount({ ...NO_FILTERS, difficulty: 'easy' })).toBe(1);
+    expect(activeFilterCount({ ...NO_FILTERS, difficulty: 'easy', tag: 'cena' })).toBe(2);
   });
 });
 

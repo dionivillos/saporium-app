@@ -1,13 +1,13 @@
-import { Image } from 'expo-image';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
-import { RecipeMeta } from '@/components/recipe-meta';
+import { KeepAwakeToggle } from '@/components/keep-awake-toggle';
+import { RecipeCover } from '@/components/recipe-cover';
+import { RecipeMetaBadges } from '@/components/recipe-meta';
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
 import type { RecipeWithDetails } from '@/db/recipes';
 import { useTheme } from '@/hooks/use-theme';
-import { photoUri } from '@/lib/photos';
 
 type Props = {
   recipe: RecipeWithDetails;
@@ -27,82 +27,84 @@ export function RecipeDetail({ recipe, onDelete }: Props) {
 
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-      {recipe.coverImagePath !== null && (
-        <Image
-          source={{ uri: photoUri(recipe.coverImagePath) }}
-          style={styles.cover}
-          contentFit="cover"
-          accessibilityIgnoresInvertColors
-        />
-      )}
+      {/* Full-bleed: the hero is the one place the content margin gets in the way. */}
+      <RecipeCover coverImagePath={recipe.coverImagePath} style={styles.cover} markSize={96} />
 
-      <View style={styles.header}>
-        <ThemedText style={styles.title}>{recipe.title}</ThemedText>
-        {recipe.description !== null && (
-          <ThemedText themeColor="textSecondary">{recipe.description}</ThemedText>
-        )}
-        <RecipeMeta recipe={recipe} />
-      </View>
-
-      <View style={styles.section}>
-        <ThemedText type="subtitle">{t('recipes.detail.ingredients')}</ThemedText>
-        {groups.map((group) => (
-          <View key={group.name ?? '__default'} style={styles.group}>
-            {group.name !== null && <ThemedText type="smallBold">{group.name}</ThemedText>}
-            {group.items.map((ingredient) => (
-              <View key={ingredient.id} style={styles.ingredient}>
-                <ThemedText themeColor="textSecondary">•</ThemedText>
-                <ThemedText style={styles.flex}>{ingredientLabel(ingredient)}</ThemedText>
-              </View>
-            ))}
-          </View>
-        ))}
-      </View>
-
-      <View style={styles.section}>
-        <ThemedText type="subtitle">{t('recipes.detail.steps')}</ThemedText>
-        {recipe.steps.map((step, index) => (
-          <View key={step.id} style={styles.step}>
-            <ThemedText style={[styles.stepNumber, { color: theme.textSecondary }]}>
-              {index + 1}
-            </ThemedText>
-            <ThemedText style={[styles.flex, styles.stepText]}>{step.content}</ThemedText>
-          </View>
-        ))}
-      </View>
-
-      {recipe.tips !== null && (
-        <View style={[styles.section, styles.tips, { backgroundColor: theme.backgroundElement }]}>
-          <ThemedText type="subtitle">{t('recipes.detail.tips')}</ThemedText>
-          <ThemedText>{recipe.tips}</ThemedText>
+      <View style={styles.body}>
+        <View style={styles.header}>
+          <ThemedText style={styles.title}>{recipe.title}</ThemedText>
+          {recipe.description !== null && (
+            <ThemedText themeColor="textSecondary">{recipe.description}</ThemedText>
+          )}
+          <RecipeMetaBadges recipe={recipe} />
         </View>
-      )}
 
-      {recipe.tags.length > 0 && (
-        <View style={styles.tags}>
-          {recipe.tags.map((tag) => (
-            <View key={tag} style={[styles.tag, { backgroundColor: theme.backgroundElement }]}>
-              <ThemedText type="small" themeColor="textSecondary">
-                {tag}
-              </ThemedText>
+        <KeepAwakeToggle />
+
+        {/* Boxed, because in the kitchen this is the list you keep glancing back at. */}
+        <View style={[styles.panel, { backgroundColor: theme.backgroundElement }]}>
+          <ThemedText type="subtitle">{t('recipes.detail.ingredients')}</ThemedText>
+          {groups.map((group) => (
+            <View key={group.name ?? '__default'} style={styles.group}>
+              {group.name !== null && <ThemedText type="smallBold">{group.name}</ThemedText>}
+              {group.items.map((ingredient) => (
+                <View key={ingredient.id} style={styles.ingredient}>
+                  <ThemedText themeColor="textSecondary">•</ThemedText>
+                  <ThemedText style={[styles.flex, styles.bodyText]}>
+                    {ingredientLabel(ingredient)}
+                  </ThemedText>
+                </View>
+              ))}
             </View>
           ))}
         </View>
-      )}
-      {onDelete !== undefined && (
-        <Pressable
-          accessibilityRole="button"
-          onPress={onDelete}
-          style={({ pressed }) => [
-            styles.delete,
-            { backgroundColor: pressed ? theme.backgroundSelected : 'transparent' },
-          ]}
-        >
-          <ThemedText type="smallBold" style={styles.deleteLabel}>
-            {t('recipes.delete.action')}
-          </ThemedText>
-        </Pressable>
-      )}
+
+        <View style={styles.section}>
+          <ThemedText type="subtitle">{t('recipes.detail.steps')}</ThemedText>
+          {recipe.steps.map((step, index) => (
+            <View key={step.id} style={styles.step}>
+              <View style={[styles.stepNumber, { backgroundColor: theme.backgroundSelected }]}>
+                <ThemedText type="smallBold">{index + 1}</ThemedText>
+              </View>
+              <ThemedText style={[styles.flex, styles.stepText]}>{step.content}</ThemedText>
+            </View>
+          ))}
+        </View>
+
+        {recipe.tips !== null && (
+          <View style={[styles.panel, { backgroundColor: theme.backgroundElement }]}>
+            <ThemedText type="subtitle">{t('recipes.detail.tips')}</ThemedText>
+            <ThemedText style={styles.bodyText}>{recipe.tips}</ThemedText>
+          </View>
+        )}
+
+        {recipe.tags.length > 0 && (
+          <View style={styles.tags}>
+            {recipe.tags.map((tag) => (
+              <View key={tag} style={[styles.tag, { backgroundColor: theme.backgroundElement }]}>
+                <ThemedText type="small" themeColor="textSecondary">
+                  #{tag}
+                </ThemedText>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {onDelete !== undefined && (
+          <Pressable
+            accessibilityRole="button"
+            onPress={onDelete}
+            style={({ pressed }) => [
+              styles.delete,
+              { backgroundColor: pressed ? theme.backgroundSelected : 'transparent' },
+            ]}
+          >
+            <ThemedText type="smallBold" style={styles.deleteLabel}>
+              {t('recipes.delete.action')}
+            </ThemedText>
+          </Pressable>
+        )}
+      </View>
     </ScrollView>
   );
 }
@@ -141,25 +143,31 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingHorizontal: Spacing.four,
-    paddingTop: Spacing.three,
     paddingBottom: Spacing.six,
-    gap: Spacing.five,
   },
   cover: {
     width: '100%',
-    aspectRatio: 4 / 3,
-    borderRadius: Spacing.three,
+    aspectRatio: 16 / 9,
+  },
+  body: {
+    paddingHorizontal: Spacing.four,
+    paddingTop: Spacing.four,
+    gap: Spacing.five,
   },
   header: {
-    gap: Spacing.two,
+    gap: Spacing.three,
   },
   title: {
-    fontSize: 30,
-    lineHeight: 36,
+    fontSize: 32,
+    lineHeight: 38,
     fontWeight: 700,
   },
   section: {
+    gap: Spacing.three,
+  },
+  panel: {
+    padding: Spacing.three,
+    borderRadius: Spacing.three,
     gap: Spacing.three,
   },
   group: {
@@ -169,15 +177,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: Spacing.two,
   },
+  bodyText: {
+    fontSize: 17,
+    lineHeight: 26,
+  },
   step: {
     flexDirection: 'row',
     gap: Spacing.three,
+    alignItems: 'flex-start',
   },
   stepNumber: {
-    fontSize: 18,
-    lineHeight: 26,
-    fontWeight: 700,
-    minWidth: 20,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: Spacing.half,
   },
   stepText: {
     fontSize: 17,
@@ -185,10 +200,6 @@ const styles = StyleSheet.create({
   },
   flex: {
     flex: 1,
-  },
-  tips: {
-    padding: Spacing.three,
-    borderRadius: Spacing.three,
   },
   tags: {
     flexDirection: 'row',

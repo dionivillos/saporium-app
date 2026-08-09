@@ -1,4 +1,16 @@
-import { and, desc, eq, exists, inArray, isNotNull, isNull, or, sql, type SQL } from 'drizzle-orm';
+import {
+  and,
+  desc,
+  eq,
+  exists,
+  getTableColumns,
+  inArray,
+  isNotNull,
+  isNull,
+  or,
+  sql,
+  type SQL,
+} from 'drizzle-orm';
 import type { SQLiteColumn } from 'drizzle-orm/sqlite-core';
 
 import { escapeLikePattern, foldForSearch, FOLDED_CHARACTERS } from '@/lib/search-text';
@@ -195,6 +207,11 @@ export type RecipeFilters = {
 
 export const NO_FILTERS: RecipeFilters = { search: '', difficulty: null, tag: null };
 
+/** How many filters are narrowing the list, search aside — it has its own field. */
+export function activeFilterCount(filters: RecipeFilters): number {
+  return (filters.difficulty === null ? 0 : 1) + (filters.tag === null ? 0 : 1);
+}
+
 /**
  * Applies the same folding as `foldForSearch` inside SQLite. Nested `replace`
  * calls are unlovely, but they keep matching in the database — the alternative
@@ -248,6 +265,23 @@ function tagCondition(db: Database, name: string): SQL | undefined {
   );
 }
 
+/** A recipe as the list needs it: the row plus the tags its card shows. */
+export type RecipeListEntry = Recipe & { tags: string[] };
+
+/**
+ * Cards show tags, and the placeholder art for a photo-less recipe is derived
+ * from them, so they travel with the row. One `group_concat` beats a query per
+ * card; the separator is a newline because a tag can contain a comma.
+ */
+const TAG_SEPARATOR = '\n';
+
+const tagList = sql<string | null>`(
+  select group_concat(${tags.name}, ${TAG_SEPARATOR})
+  from ${recipeTags}
+  inner join ${tags} on ${tags.id} = ${recipeTags.tagId}
+  where ${recipeTags.recipeId} = ${recipes.id}
+)`;
+
 /**
  * Most recently touched first, trashed recipes excluded. Returned unexecuted so
  * screens can hand it to `useLiveQuery` and re-render on every write.
@@ -261,14 +295,24 @@ export function recipeListQuery(db: Database, filters: RecipeFilters = NO_FILTER
   ];
 
   return db
-    .select()
+    .select({ ...getTableColumns(recipes), tagList })
     .from(recipes)
     .where(and(...conditions))
     .orderBy(desc(recipes.updatedAt));
 }
 
-export function listRecipes(db: Database, filters: RecipeFilters = NO_FILTERS): Recipe[] {
-  return recipeListQuery(db, filters).all();
+/** Turns a row from `recipeListQuery` into the shape the card renders. */
+export function toListEntry(row: Recipe & { tagList: string | null }): RecipeListEntry {
+  const { tagList: joined, ...recipe } = row;
+
+  return {
+    ...recipe,
+    tags: joined === null ? [] : joined.split(TAG_SEPARATOR).sort((a, b) => a.localeCompare(b)),
+  };
+}
+
+export function listRecipes(db: Database, filters: RecipeFilters = NO_FILTERS): RecipeListEntry[] {
+  return recipeListQuery(db, filters).all().map(toListEntry);
 }
 
 /** Tags actually in use by a recipe that is not in the trash, for the filter row. */
