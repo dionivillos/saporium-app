@@ -35,7 +35,7 @@ export function RecipeFilterBar({ filters, onChange, sort, onSortChange, tags }:
   const [openSheet, setOpenSheet] = useState<'filters' | 'sort' | null>(null);
 
   const active = activeFilterCount(filters);
-  const sorted = sort !== DEFAULT_SORT;
+  const sorted = sort.field !== DEFAULT_SORT.field || sort.direction !== DEFAULT_SORT.direction;
 
   return (
     <View style={styles.bar}>
@@ -53,6 +53,7 @@ export function RecipeFilterBar({ filters, onChange, sort, onSortChange, tags }:
 
       <View style={styles.actions}>
         <Pill
+          icon="☰"
           label={
             active > 0
               ? t('recipes.search.filtersActive', { count: active })
@@ -63,7 +64,12 @@ export function RecipeFilterBar({ filters, onChange, sort, onSortChange, tags }:
         />
 
         <Pill
-          label={sorted ? t(`recipes.sort.${sort}`) : t('recipes.sort.label')}
+          icon={sort.direction === 'asc' ? '↑' : '↓'}
+          label={
+            sorted
+              ? t(`recipes.sort.summary.${sort.field}.${sort.direction}`)
+              : t('recipes.sort.label')
+          }
           highlighted={sorted}
           onPress={() => setOpenSheet('sort')}
         />
@@ -99,11 +105,14 @@ export function RecipeFilterBar({ filters, onChange, sort, onSortChange, tags }:
   );
 }
 
+/** Icon plus the value it currently holds, so the header always explains itself. */
 function Pill({
+  icon,
   label,
   highlighted,
   onPress,
 }: {
+  icon: string;
   label: string;
   highlighted: boolean;
   onPress: () => void;
@@ -113,6 +122,7 @@ function Pill({
   return (
     <Pressable
       accessibilityRole="button"
+      accessibilityLabel={label}
       onPress={onPress}
       style={({ pressed }) => [
         styles.pill,
@@ -122,6 +132,9 @@ function Pill({
         },
       ]}
     >
+      <ThemedText type="small" themeColor="textSecondary" accessibilityElementsHidden>
+        {icon}
+      </ThemedText>
       <ThemedText type="small">{label}</ThemedText>
     </Pressable>
   );
@@ -146,6 +159,9 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
   },
   pill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.one + Spacing.half,
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.one + Spacing.half,
     borderRadius: 999,

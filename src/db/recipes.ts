@@ -282,11 +282,26 @@ const tagList = sql<string | null>`(
   where ${recipeTags.recipeId} = ${recipes.id}
 )`;
 
-export const RECIPE_SORTS = ['recent', 'title', 'time', 'servings'] as const;
+export const SORT_FIELDS = ['updated', 'title', 'time', 'servings'] as const;
 
-export type RecipeSort = (typeof RECIPE_SORTS)[number];
+export type SortField = (typeof SORT_FIELDS)[number];
+export type SortDirection = 'asc' | 'desc';
 
-export const DEFAULT_SORT: RecipeSort = 'recent';
+export type RecipeSort = {
+  field: SortField;
+  direction: SortDirection;
+};
+
+/** Most recently touched first: what you want when you open the app. */
+export const DEFAULT_SORT: RecipeSort = { field: 'updated', direction: 'desc' };
+
+/** What reads as "natural" for each field, so switching fields is not a surprise. */
+export const NATURAL_DIRECTION: Record<SortField, SortDirection> = {
+  updated: 'desc',
+  title: 'asc',
+  time: 'asc',
+  servings: 'asc',
+};
 
 /**
  * What "how long does this take" means when a recipe only filled in some of
@@ -300,17 +315,23 @@ const effectiveMinutes = sql`case
   else null
 end`;
 
-function ordering(sort: RecipeSort): SQL[] {
-  switch (sort) {
+function ordering({ field, direction }: RecipeSort): SQL[] {
+  const way = direction === 'asc' ? sql`asc` : sql`desc`;
+
+  switch (field) {
     // Folded so "Ñoquis" and "Sopa" land where a reader expects, not after Z.
     case 'title':
-      return [sql`${folded(recipes.title)} asc`];
+      return [sql`${folded(recipes.title)} ${way}`];
+    // Recipes that say nothing about time go last either way: an unknown time
+    // is not zero minutes, and it is not three hours either.
     case 'time':
-      return [sql`${effectiveMinutes} is null`, sql`${effectiveMinutes} asc`];
+      return [sql`${effectiveMinutes} is null`, sql`${effectiveMinutes} ${way}`];
     case 'servings':
-      return [sql`${recipes.servingsMin} asc`, sql`${folded(recipes.title)} asc`];
-    case 'recent':
-      return [sql`${recipes.updatedAt} desc`];
+      return [sql`${recipes.servingsMin} ${way}`, sql`${folded(recipes.title)} asc`];
+    // Two recipes saved in the same second would otherwise swap places between
+    // renders, so the title settles it.
+    case 'updated':
+      return [sql`${recipes.updatedAt} ${way}`, sql`${folded(recipes.title)} asc`];
   }
 }
 
