@@ -97,6 +97,13 @@
       "noTags": "Aún no has usado ningún tag.",
       "noResults": "No hay recetas que coincidan con tu búsqueda"
     },
+    "sort": {
+      "label": "Ordenar",
+      "recent": "Más recientes",
+      "title": "Alfabético",
+      "time": "Más rápidas",
+      "servings": "Menos raciones"
+    },
     "created": "Receta guardada"
   },
   "database": {
@@ -135,7 +142,6 @@
     "urlPlaceholder": "https://...",
     "submit": "Traer la receta",
     "working": "Buscando la receta...",
-    "privacy": "Tu móvil se conecta directamente con la web. No pasa por ningún servidor nuestro, porque no tenemos.",
     "errors": {
       "invalidUrl": "Esa dirección no parece válida.",
       "insecure": "Solo se pueden importar direcciones https.",

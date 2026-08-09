@@ -1,5 +1,5 @@
-import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
@@ -21,14 +21,32 @@ export default function NewRecipeScreen() {
   const [initial, setInitial] = useState<RecipeFormValues | null>(null);
   const [restored, setRestored] = useState(false);
   const [ready, setReady] = useState(false);
+  // The form reads its initial values once, so an import arriving later has to
+  // remount it rather than hope the prop is picked up.
+  const [generation, setGeneration] = useState(0);
+  const imported = useRef(false);
+
+  // Also runs on the way back from the import screen, which leaves this one
+  // mounted underneath.
+  useFocusEffect(
+    useCallback(() => {
+      const values = takePendingImport();
+      if (values === null) return;
+
+      imported.current = true;
+      setInitial(values);
+      setRestored(false);
+      setReady(true);
+      setGeneration((current) => current + 1);
+    }, [])
+  );
 
   useEffect(() => {
-    // An import arrives already filled in and wins over a stored draft, which
-    // stays on disk in case the user backs out without saving either.
-    const imported = takePendingImport();
+    void loadDraft(KEY).then((draft) => {
+      // An import that landed first wins: it is the more recent intent.
+      if (imported.current) return;
 
-    void (imported !== null ? Promise.resolve(null) : loadDraft(KEY)).then((draft) => {
-      setInitial(imported ?? draft);
+      setInitial(draft);
       setRestored(draft !== null);
       setReady(true);
     });
@@ -57,7 +75,7 @@ export default function NewRecipeScreen() {
         // is something in it, importing would mean throwing that away.
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.replace('/recipe/import')}
+          onPress={() => router.push('/recipe/import?returnToForm=1')}
           style={styles.notice}
         >
           <ThemedText type="small" style={styles.link}>
@@ -66,6 +84,7 @@ export default function NewRecipeScreen() {
         </Pressable>
       )}
       <RecipeForm
+        key={generation}
         initialValues={initial ?? undefined}
         submitLabel={t('recipes.form.submit')}
         onSubmit={handleSubmit}

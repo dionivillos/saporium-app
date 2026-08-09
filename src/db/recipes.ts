@@ -282,11 +282,47 @@ const tagList = sql<string | null>`(
   where ${recipeTags.recipeId} = ${recipes.id}
 )`;
 
+export const RECIPE_SORTS = ['recent', 'title', 'time', 'servings'] as const;
+
+export type RecipeSort = (typeof RECIPE_SORTS)[number];
+
+export const DEFAULT_SORT: RecipeSort = 'recent';
+
 /**
- * Most recently touched first, trashed recipes excluded. Returned unexecuted so
- * screens can hand it to `useLiveQuery` and re-render on every write.
+ * What "how long does this take" means when a recipe only filled in some of
+ * the fields; mirrors `effectiveTotalMinutes`. Null when it says nothing at
+ * all, which sorts last rather than first — an unknown time is not zero.
  */
-export function recipeListQuery(db: Database, filters: RecipeFilters = NO_FILTERS) {
+const effectiveMinutes = sql`case
+  when ${recipes.totalTimeMinutes} is not null then ${recipes.totalTimeMinutes}
+  when ${recipes.prepTimeMinutes} is not null or ${recipes.cookTimeMinutes} is not null
+    then coalesce(${recipes.prepTimeMinutes}, 0) + coalesce(${recipes.cookTimeMinutes}, 0)
+  else null
+end`;
+
+function ordering(sort: RecipeSort): SQL[] {
+  switch (sort) {
+    // Folded so "Ñoquis" and "Sopa" land where a reader expects, not after Z.
+    case 'title':
+      return [sql`${folded(recipes.title)} asc`];
+    case 'time':
+      return [sql`${effectiveMinutes} is null`, sql`${effectiveMinutes} asc`];
+    case 'servings':
+      return [sql`${recipes.servingsMin} asc`, sql`${folded(recipes.title)} asc`];
+    case 'recent':
+      return [sql`${recipes.updatedAt} desc`];
+  }
+}
+
+/**
+ * Trashed recipes excluded. Returned unexecuted so screens can hand it to
+ * `useLiveQuery` and re-render on every write.
+ */
+export function recipeListQuery(
+  db: Database,
+  filters: RecipeFilters = NO_FILTERS,
+  sort: RecipeSort = DEFAULT_SORT
+) {
   const conditions = [
     isNull(recipes.deletedAt),
     searchCondition(db, filters.search),
@@ -298,7 +334,7 @@ export function recipeListQuery(db: Database, filters: RecipeFilters = NO_FILTER
     .select({ ...getTableColumns(recipes), tagList })
     .from(recipes)
     .where(and(...conditions))
-    .orderBy(desc(recipes.updatedAt));
+    .orderBy(...ordering(sort));
 }
 
 /** Turns a row from `recipeListQuery` into the shape the card renders. */
@@ -311,8 +347,12 @@ export function toListEntry(row: Recipe & { tagList: string | null }): RecipeLis
   };
 }
 
-export function listRecipes(db: Database, filters: RecipeFilters = NO_FILTERS): RecipeListEntry[] {
-  return recipeListQuery(db, filters).all().map(toListEntry);
+export function listRecipes(
+  db: Database,
+  filters: RecipeFilters = NO_FILTERS,
+  sort: RecipeSort = DEFAULT_SORT
+): RecipeListEntry[] {
+  return recipeListQuery(db, filters, sort).all().map(toListEntry);
 }
 
 /** Tags actually in use by a recipe that is not in the trash, for the filter row. */
