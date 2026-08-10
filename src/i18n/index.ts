@@ -21,6 +21,9 @@ export const resources = {
 
 export type Locale = keyof typeof resources;
 
+/** Every language with a catalog, for the in-app picker. */
+export const AVAILABLE_LOCALES = Object.keys(resources) as Locale[];
+
 function isSupported(code: string | null): code is Locale {
   return code !== null && code in resources;
 }

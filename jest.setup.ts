@@ -18,3 +18,10 @@ jest.mock('expo-image', () => ({
 jest.mock('expo-localization', () => ({
   getLocales: () => [{ languageCode: 'es' }],
 }));
+
+// Every themed component now reaches AsyncStorage through the preferences
+// store, so the whole suite needs the library's own mock rather than the native
+// module it cannot find.
+jest.mock('@react-native-async-storage/async-storage', () =>
+  require('@react-native-async-storage/async-storage/jest/async-storage-mock')
+);

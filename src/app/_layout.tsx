@@ -11,10 +11,22 @@ import { db } from '@/db/client';
 import migrations from '@/db/migrations/migrations';
 import { seedIfEmpty } from '@/db/seed';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { PreferencesProvider, usePreferences } from '@/hooks/use-preferences';
 import '@/i18n';
 
 export default function RootLayout() {
+  // Everything that paints reads the stored choices, so the provider has to sit
+  // above the navigator rather than inside it.
+  return (
+    <PreferencesProvider>
+      <App />
+    </PreferencesProvider>
+  );
+}
+
+function App() {
   const colorScheme = useColorScheme();
+  const { ready: preferencesReady } = usePreferences();
   const { t } = useTranslation();
   const { success, error } = useMigrations(db, migrations);
 
@@ -29,7 +41,9 @@ export default function RootLayout() {
     <GestureHandlerRootView style={styles.root}>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <StatusBar style="auto" />
-        <DatabaseGate ready={success} error={error}>
+        {/* Waiting for the stored choices too, so the app never paints light
+            and then flips to dark, or greets the user in the wrong language. */}
+        <DatabaseGate ready={success && preferencesReady} error={error}>
           <Stack>
             <Stack.Screen
               name="index"
@@ -66,6 +80,7 @@ export default function RootLayout() {
             <Stack.Screen name="recipe/scan" options={{ title: t('scan.title') }} />
             <Stack.Screen name="more" options={{ title: t('more.title') }} />
             <Stack.Screen name="ai" options={{ title: t('ai.title') }} />
+            <Stack.Screen name="appearance" options={{ title: t('appearance.title') }} />
             <Stack.Screen name="trash" options={{ title: t('trash.title') }} />
             <Stack.Screen name="backup" options={{ title: t('backup.title') }} />
           </Stack>

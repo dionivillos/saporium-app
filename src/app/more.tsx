@@ -16,6 +16,11 @@ export default function MoreScreen() {
     <ThemedView style={styles.container}>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
         <Entry
+          title={t('appearance.title')}
+          description={t('appearance.description')}
+          onPress={() => router.push('/appearance')}
+        />
+        <Entry
           title={t('import.title')}
           description={t('import.description')}
           onPress={() => router.push('/recipe/import')}

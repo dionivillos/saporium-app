@@ -256,5 +256,17 @@
       "notARecipe": "No he podido leer una receta en esas fotos.",
       "unreadable": "No se ha podido preparar la foto."
     }
+  },
+  "appearance": {
+    "title": "Apariencia e idioma",
+    "description": "Elige cómo se ve la app y en qué idioma te habla.",
+    "theme": "Apariencia",
+    "themes": {
+      "system": "Como el móvil",
+      "light": "Claro",
+      "dark": "Oscuro"
+    },
+    "language": "Idioma",
+    "systemHint": "«Como el móvil» sigue lo que tengas configurado en los ajustes del sistema, y cambia cuando eso cambie."
   }
 }

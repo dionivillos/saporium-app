@@ -256,5 +256,17 @@
       "notARecipe": "I could not read a recipe in those photos.",
       "unreadable": "The photo could not be prepared."
     }
+  },
+  "appearance": {
+    "title": "Appearance and language",
+    "description": "Choose how the app looks and which language it speaks to you in.",
+    "theme": "Appearance",
+    "themes": {
+      "system": "Match the phone",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "language": "Language",
+    "systemHint": "\"Match the phone\" follows your system settings, and changes when they do."
   }
 }
