@@ -94,7 +94,7 @@ export default function TrashScreen() {
                   },
                 ]}
               >
-                <ThemedText type="small" style={styles.destructive}>
+                <ThemedText type="small" style={{ color: theme.danger }}>
                   {t('trash.deleteForever')}
                 </ThemedText>
               </Pressable>
@@ -144,9 +144,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.two,
     borderRadius: 999,
-  },
-  destructive: {
-    color: '#C0392B',
   },
   separator: {
     height: StyleSheet.hairlineWidth,

@@ -10,3 +10,11 @@ jest.mock('expo-crypto', () => ({
 jest.mock('expo-image', () => ({
   Image: require('react-native').View,
 }));
+
+// The suite asserts on user-visible strings, so its outcome must not depend on
+// the language of whatever machine runs it. Adding English made that real:
+// without this, the same tests pass or fail depending on the device locale.
+// The catalogs are compared against each other in their own test instead.
+jest.mock('expo-localization', () => ({
+  getLocales: () => [{ languageCode: 'es' }],
+}));

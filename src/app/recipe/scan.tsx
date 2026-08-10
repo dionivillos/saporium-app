@@ -34,6 +34,7 @@ const MAX_PHOTOS = 4;
 export default function ScanRecipeScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const theme = useTheme();
 
   const [credentials, setCredentials] = useState<AiCredentials | null>(null);
   const [ready, setReady] = useState(false);
@@ -149,7 +150,7 @@ export default function ScanRecipeScreen() {
         )}
 
         {failure !== null && (
-          <ThemedText type="small" style={styles.error}>
+          <ThemedText type="small" style={{ color: theme.danger }}>
             {t(MESSAGES[failure])}
           </ThemedText>
         )}
@@ -249,8 +250,5 @@ const styles = StyleSheet.create({
   clear: {
     alignItems: 'center',
     paddingVertical: Spacing.two,
-  },
-  error: {
-    color: '#C0392B',
   },
 });

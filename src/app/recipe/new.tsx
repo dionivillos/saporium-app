@@ -7,6 +7,7 @@ import { RecipeForm, type RecipeFormValues } from '@/components/recipe-form';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
+import { useTheme } from '@/hooks/use-theme';
 import { db } from '@/db/client';
 import { createRecipe } from '@/db/recipes';
 import { clearDraft, draftKey, loadDraft, saveDraft } from '@/lib/draft';
@@ -19,6 +20,7 @@ const KEY = draftKey();
 export default function NewRecipeScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const theme = useTheme();
   const [initial, setInitial] = useState<RecipeFormValues | null>(null);
   const [restored, setRestored] = useState(false);
   const [ready, setReady] = useState(false);
@@ -85,7 +87,7 @@ export default function NewRecipeScreen() {
           onPress={() => router.push('/recipe/import?returnToForm=1')}
           style={styles.notice}
         >
-          <ThemedText type="small" style={styles.link}>
+          <ThemedText type="small" style={{ color: theme.link }}>
             {t('import.fromForm')}
           </ThemedText>
         </Pressable>
@@ -96,7 +98,7 @@ export default function NewRecipeScreen() {
           onPress={() => router.push('/recipe/paste')}
           style={styles.notice}
         >
-          <ThemedText type="small" style={styles.link}>
+          <ThemedText type="small" style={{ color: theme.link }}>
             {t('paste.fromForm')}
           </ThemedText>
         </Pressable>
@@ -107,7 +109,7 @@ export default function NewRecipeScreen() {
           onPress={() => router.push('/recipe/scan')}
           style={styles.notice}
         >
-          <ThemedText type="small" style={styles.link}>
+          <ThemedText type="small" style={{ color: theme.link }}>
             {t('scan.fromForm')}
           </ThemedText>
         </Pressable>
@@ -130,8 +132,5 @@ const styles = StyleSheet.create({
   notice: {
     paddingHorizontal: Spacing.four,
     paddingTop: Spacing.three,
-  },
-  link: {
-    color: '#0A7EA4',
   },
 });

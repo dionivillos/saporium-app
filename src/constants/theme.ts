@@ -13,6 +13,10 @@ export const Colors = {
     backgroundElement: '#F2ECE2',
     backgroundSelected: '#E7DFD2',
     border: '#E8E0D4',
+    /** Destructive actions and validation errors. */
+    danger: '#C0392B',
+    /** Inline navigation that is not a button. */
+    link: '#0A7EA4',
   },
   dark: {
     text: '#F7F3EC',
@@ -21,6 +25,10 @@ export const Colors = {
     backgroundElement: '#23201D',
     backgroundSelected: '#2E2A26',
     border: '#33302B',
+    // Lightened for the dark background: the light-mode red and blue sit at
+    // 3.4:1 and 4.0:1 against #151312, both under the 4.5:1 WCAG AA needs.
+    danger: '#F08A7A',
+    link: '#3FA9CC',
   },
 } as const;
 

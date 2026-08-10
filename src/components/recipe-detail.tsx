@@ -32,7 +32,9 @@ export function RecipeDetail({ recipe, onDelete }: Props) {
 
       <View style={styles.body}>
         <View style={styles.header}>
-          <ThemedText style={styles.title}>{recipe.title}</ThemedText>
+          <ThemedText style={styles.title} maxFontSizeMultiplier={1.6}>
+            {recipe.title}
+          </ThemedText>
           {recipe.description !== null && (
             <ThemedText themeColor="textSecondary">{recipe.description}</ThemedText>
           )}
@@ -99,7 +101,7 @@ export function RecipeDetail({ recipe, onDelete }: Props) {
               { backgroundColor: pressed ? theme.backgroundSelected : 'transparent' },
             ]}
           >
-            <ThemedText type="smallBold" style={styles.deleteLabel}>
+            <ThemedText type="smallBold" style={[styles.deleteLabel, { color: theme.danger }]}>
               {t('recipes.delete.action')}
             </ThemedText>
           </Pressable>
@@ -186,10 +188,12 @@ const styles = StyleSheet.create({
     gap: Spacing.three,
     alignItems: 'flex-start',
   },
+  // Grows with the text rather than clipping the number at large type sizes.
   stepNumber: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    minWidth: 28,
+    minHeight: 28,
+    paddingHorizontal: Spacing.one + Spacing.half,
+    borderRadius: 999,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: Spacing.half,
@@ -219,6 +223,5 @@ const styles = StyleSheet.create({
   },
   deleteLabel: {
     fontSize: 16,
-    color: '#C0392B',
   },
 });

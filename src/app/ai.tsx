@@ -158,7 +158,7 @@ export default function AiSettingsScreen() {
               </ThemedText>
             )}
             {status.kind === 'failed' && (
-              <ThemedText type="small" style={styles.error}>
+              <ThemedText type="small" style={{ color: theme.danger }}>
                 {t(ERRORS[status.reason])}
               </ThemedText>
             )}
@@ -171,7 +171,7 @@ export default function AiSettingsScreen() {
                 { backgroundColor: pressed ? theme.backgroundSelected : 'transparent' },
               ]}
             >
-              <ThemedText type="smallBold" style={styles.error}>
+              <ThemedText type="smallBold" style={{ color: theme.danger }}>
                 {t('ai.remove')}
               </ThemedText>
             </Pressable>
@@ -265,8 +265,5 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.three,
     borderRadius: Spacing.two,
     alignItems: 'center',
-  },
-  error: {
-    color: '#C0392B',
   },
 });

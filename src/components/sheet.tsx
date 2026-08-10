@@ -28,7 +28,7 @@ export function Sheet({ visible, title, onClose, children, footer }: Props) {
         <View style={styles.header}>
           <ThemedText type="subtitle">{title}</ThemedText>
           <Pressable accessibilityRole="button" onPress={onClose} hitSlop={Spacing.two}>
-            <ThemedText type="smallBold" style={styles.action}>
+            <ThemedText type="smallBold" style={[styles.action, { color: theme.link }]}>
               {t('common.close')}
             </ThemedText>
           </Pressable>
@@ -112,12 +112,13 @@ const styles = StyleSheet.create({
   },
   option: {
     paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.two,
+    // Apple's minimum touch target is 44pt; the padding alone left these at 30.
+    minHeight: 44,
+    justifyContent: 'center',
     borderRadius: 999,
     borderWidth: 1,
   },
   action: {
     fontSize: 16,
-    color: '#0A7EA4',
   },
 });

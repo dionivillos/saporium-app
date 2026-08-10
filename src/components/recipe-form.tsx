@@ -294,7 +294,8 @@ const styles = StyleSheet.create({
     gap: Spacing.three,
   },
   disclosure: {
-    paddingVertical: Spacing.two,
+    minHeight: 44,
+    justifyContent: 'center',
   },
   details: {
     gap: Spacing.four,
@@ -305,7 +306,8 @@ const styles = StyleSheet.create({
   },
   chip: {
     paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.two,
+    minHeight: 44,
+    justifyContent: 'center',
     borderRadius: 999,
   },
   submit: {

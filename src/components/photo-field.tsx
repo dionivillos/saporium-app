@@ -84,7 +84,7 @@ export function PhotoField({ value, onChange }: Props) {
           { backgroundColor: pressed ? theme.backgroundSelected : theme.backgroundElement },
         ]}
       >
-        <ThemedText type="small" style={destructive === true ? styles.destructive : undefined}>
+        <ThemedText type="small" style={destructive === true ? { color: theme.danger } : undefined}>
           {label}
         </ThemedText>
       </Pressable>
@@ -108,10 +108,8 @@ const styles = StyleSheet.create({
   },
   action: {
     paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.two,
+    minHeight: 44,
+    justifyContent: 'center',
     borderRadius: 999,
-  },
-  destructive: {
-    color: '#C0392B',
   },
 });
