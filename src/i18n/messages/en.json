@@ -1,0 +1,260 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "saving": "Saving...",
+    "error": "Something went wrong",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "back": "Back",
+    "search": "Search",
+    "confirm": "Confirm",
+    "close": "Close",
+    "minutes": "{{value}} min",
+    "hours": "{{count}} h",
+    "hoursMinutes": "{{hours}} h {{minutes}} min",
+    "servings_one": "{{count}} serving",
+    "servings_other": "{{count}} servings",
+    "servingsRange": "{{min}}-{{max}} servings"
+  },
+  "recipes": {
+    "title": "My recipes",
+    "count_one": "{{count}} recipe",
+    "count_other": "{{count}} recipes",
+    "empty": "No recipes yet",
+    "emptyDescription": "Add your first recipe and start building your own cookbook.",
+    "emptyAction": "Add the first recipe",
+    "new": "New recipe",
+    "edit": "Edit recipe",
+    "difficulty": {
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard"
+    },
+    "form": {
+      "title": "Title",
+      "titlePlaceholder": "e.g. Spanish omelette",
+      "titleRequired": "A title is required",
+      "description": "Description",
+      "descriptionPlaceholder": "A short description of the recipe...",
+      "difficulty": "Difficulty",
+      "prepTime": "Prep (min)",
+      "cookTime": "Cook (min)",
+      "servingsMin": "Servings (min.)",
+      "servingsMax": "Servings (max.)",
+      "ingredients": "Ingredients",
+      "ingredientsPlaceholder": "One ingredient per line:\n500 g potatoes\n4 eggs",
+      "ingredientsRequired": "Add at least one ingredient",
+      "steps": "Steps",
+      "stepsPlaceholder": "One step per paragraph. Leave a blank line between steps.",
+      "stepsRequired": "Add at least one step",
+      "tags": "Tags",
+      "tagsHint": "Comma separated. Ten at most.",
+      "tips": "Tips",
+      "tipsPlaceholder": "Tricks and hints to get it right...",
+      "coverImage": "Cover photo",
+      "moreDetails": "More details",
+      "submit": "Save recipe",
+      "submitEdit": "Update recipe",
+      "tagsPlaceholder": "dinner, dessert, quick",
+      "draftRestored": "We kept what you were writing.",
+      "discardDraft": "Discard",
+      "photoTake": "Take a photo",
+      "photoChoose": "Choose from library",
+      "photoRemove": "Remove photo",
+      "photoPermission": "I need permission to use the camera or your photos.",
+      "photoError": "The photo could not be saved."
+    },
+    "detail": {
+      "prepTime": "Prep",
+      "cookTime": "Cook",
+      "totalTime": "Total",
+      "servings": "Servings",
+      "difficulty": "Difficulty",
+      "ingredients": "Ingredients",
+      "steps": "Method",
+      "tips": "Tips",
+      "tags": "Tags",
+      "source": "Source",
+      "stepImage": "Step {{n}}",
+      "keepAwake": "Keep the screen on",
+      "keepAwakeHint": "While you cook, so it does not dim on you."
+    },
+    "delete": {
+      "action": "Delete recipe",
+      "title": "Move to the trash?",
+      "description": "You can restore it from the trash.",
+      "confirm": "Delete"
+    },
+    "search": {
+      "placeholder": "Search my recipes...",
+      "filters": "Filter",
+      "filtersActive_one": "Filter · {{count}}",
+      "filtersActive_other": "Filter · {{count}}",
+      "clear": "Clear filters",
+      "noTags": "You have not used any tags yet.",
+      "noResults": "No recipes match your search"
+    },
+    "sort": {
+      "label": "Sort",
+      "field": "Sort by",
+      "direction": "Which way",
+      "fields": {
+        "updated": "Date",
+        "title": "Name",
+        "time": "Time",
+        "servings": "Servings"
+      },
+      "directions": {
+        "updated": {
+          "asc": "Oldest first",
+          "desc": "Newest first"
+        },
+        "title": {
+          "asc": "A to Z",
+          "desc": "Z to A"
+        },
+        "time": {
+          "asc": "Quickest first",
+          "desc": "Longest first"
+        },
+        "servings": {
+          "asc": "Fewest servings first",
+          "desc": "Most servings first"
+        }
+      },
+      "summary": {
+        "updated": {
+          "asc": "Oldest",
+          "desc": "Newest"
+        },
+        "title": {
+          "asc": "A-Z",
+          "desc": "Z-A"
+        },
+        "time": {
+          "asc": "Quickest",
+          "desc": "Longest"
+        },
+        "servings": {
+          "asc": "Fewest servings",
+          "desc": "Most servings"
+        }
+      }
+    },
+    "created": "Recipe saved"
+  },
+  "database": {
+    "error": "The database could not be prepared"
+  },
+  "backup": {
+    "title": "Backup",
+    "export": "Export recipes",
+    "exportDescription": "Save every recipe to a JSON file (schema.org). It works as a backup, and other recipe apps can read it.",
+    "exportEmpty": "There are no recipes to export yet.",
+    "exportError": "The file could not be created.",
+    "import": "Import recipes",
+    "importDescription": "Add the recipes in a JSON file exported from Saporium or another app. It never overwrites what you already have.",
+    "importing": "Importing...",
+    "imported_one": "{{count}} recipe imported.",
+    "imported_other": "{{count}} recipes imported.",
+    "importedNone": "The file held no recipes that could be imported.",
+    "importSkipped_one": "{{count}} incomplete recipe was skipped.",
+    "importSkipped_other": "{{count}} incomplete recipes were skipped.",
+    "importInvalid": "That file is not valid JSON.",
+    "importError": "The file could not be read."
+  },
+  "errors": {
+    "recipeNotFound": "Recipe not found",
+    "notFound": "Not found",
+    "backHome": "Back to the start"
+  },
+  "more": {
+    "title": "More"
+  },
+  "import": {
+    "title": "Import from a website",
+    "description": "Paste the address of a recipe and we bring it in filled out for you to review. Nothing is saved until you save it.",
+    "fromForm": "Is the recipe on a website? Import it",
+    "url": "Recipe address",
+    "urlPlaceholder": "https://...",
+    "submit": "Fetch the recipe",
+    "working": "Looking for the recipe...",
+    "errors": {
+      "invalidUrl": "That address does not look valid.",
+      "insecure": "Only https addresses can be imported.",
+      "timeout": "The site took too long to answer.",
+      "unreachable": "That site could not be reached.",
+      "tooLarge": "The page is too big.",
+      "unsupported": "I could not find a recipe on that page."
+    }
+  },
+  "trash": {
+    "title": "Trash",
+    "description": "Deleted recipes stay here until you remove them for good.",
+    "empty": "The trash is empty",
+    "restore": "Restore",
+    "deleteForever": "Delete forever",
+    "deleteForeverTitle": "Delete forever?",
+    "deleteForeverDescription": "\"{{title}}\" will be gone for good. This cannot be undone."
+  },
+  "ai": {
+    "title": "AI (optional)",
+    "description": "Saporium works fully without AI. If you want it, you bring your own provider key and your phone talks to them directly.",
+    "provider": "Provider",
+    "providers": {
+      "anthropic": "Anthropic",
+      "openai": "OpenAI"
+    },
+    "key": "API key",
+    "keyPlaceholder": "Paste your key here",
+    "save": "Save key",
+    "test": "Test the key",
+    "testing": "Testing...",
+    "testOk": "The key works.",
+    "remove": "Remove the key",
+    "removeTitle": "Remove the key?",
+    "removeDescription": "It will be deleted from the device keychain. You can paste it again whenever you want.",
+    "privacy": "The key is stored in the device keychain. It never enters the database or a backup, and it never leaves your phone except towards your provider.",
+    "errors": {
+      "unauthorized": "The provider does not accept that key.",
+      "rateLimited": "Your provider is rate limiting you. Try again in a while.",
+      "unreachable": "The provider could not be reached.",
+      "timeout": "The provider took too long to answer.",
+      "badResponse": "The provider answered something I cannot read."
+    }
+  },
+  "paste": {
+    "title": "Paste a recipe",
+    "fromForm": "Got it written down somewhere? Paste it",
+    "description": "Paste the text as it is: a message, a slice of a blog, some notes. We tidy it up and bring it to the form for you to review.",
+    "text": "Recipe text",
+    "textPlaceholder": "Paste the text here...",
+    "submit": "Tidy up the text",
+    "working": "Reading the recipe...",
+    "cost": "This uses your key, so your provider account pays for it.",
+    "needsKey": "This needs an AI key, and you have not set one up yet.",
+    "configureKey": "Set up the key",
+    "errors": {
+      "notARecipe": "I could not find a recipe in that text."
+    }
+  },
+  "scan": {
+    "title": "Photo of a recipe",
+    "fromForm": "Is it in a book? Take a photo",
+    "description": "Photograph the page or pick photos from your library. We read them and bring the recipe to the form for you to review.",
+    "take": "Take a photo",
+    "choose": "From library",
+    "clear": "Start over",
+    "submit": "Read the recipe",
+    "working": "Reading the photo...",
+    "cost": "This uses your key, so your provider account pays for it. Photos are shrunk before they are sent.",
+    "needsKey": "This needs an AI key, and you have not set one up yet.",
+    "errors": {
+      "notARecipe": "I could not read a recipe in those photos.",
+      "unreadable": "The photo could not be prepared."
+    }
+  }
+}

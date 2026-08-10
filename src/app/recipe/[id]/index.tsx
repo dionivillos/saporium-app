@@ -9,11 +9,13 @@ import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { db } from '@/db/client';
 import { getRecipe, softDeleteRecipe, type RecipeWithDetails } from '@/db/recipes';
+import { useTheme } from '@/hooks/use-theme';
 
 export default function RecipeDetailScreen() {
   const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const theme = useTheme();
   const [recipe, setRecipe] = useState<RecipeWithDetails | null>(null);
 
   function confirmDelete() {
@@ -53,7 +55,11 @@ export default function RecipeDetailScreen() {
           // The hero already carries the title; repeating it in the bar is noise.
           title: '',
           headerRight: () => (
-            <Link href={`/recipe/${id}/edit`} style={styles.headerLink}>
+            <Link
+              href={`/recipe/${id}/edit`}
+              allowFontScaling={false}
+              style={[styles.headerLink, { color: theme.link }]}
+            >
               {t('common.edit')}
             </Link>
           ),
@@ -76,6 +82,5 @@ const styles = StyleSheet.create({
   },
   headerLink: {
     fontSize: 17,
-    color: '#0A7EA4',
   },
 });

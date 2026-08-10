@@ -2,13 +2,21 @@ import { getLocales } from 'expo-localization';
 import { createInstance } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
+import en from './messages/en.json';
 import es from './messages/es.json';
 
+/**
+ * Spanish, not English, and deliberately: it is the language the app was
+ * written in and the one its first users speak, so an unrecognised device
+ * language lands somewhere the owner can read rather than somewhere merely
+ * more common.
+ */
 export const defaultLocale = 'es';
 
 /** Add a language here and its catalog under `messages/` to ship it. */
 export const resources = {
   es: { translation: es },
+  en: { translation: en },
 } as const;
 
 export type Locale = keyof typeof resources;

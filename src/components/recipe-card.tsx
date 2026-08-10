@@ -25,10 +25,16 @@ export function RecipeCard({ recipe, onPress }: Props) {
   const visibleTags = recipe.tags.slice(0, VISIBLE_TAGS);
   const overflow = recipe.tags.length - visibleTags.length;
 
+  // One announcement per card, so VoiceOver reads a recipe in a single swipe
+  // instead of four fragments the listener has to reassemble.
+  const spoken = [recipe.title, recipe.description, ...recipe.tags]
+    .filter((part): part is string => part !== null && part !== '')
+    .join('. ');
+
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={recipe.title}
+      accessibilityLabel={spoken}
       onPress={onPress}
       style={({ pressed }) => [
         styles.card,
@@ -40,8 +46,12 @@ export function RecipeCard({ recipe, onPress }: Props) {
     >
       <RecipeCover coverImagePath={recipe.coverImagePath} style={styles.cover} />
 
-      <View style={styles.body}>
-        <ThemedText style={styles.title} numberOfLines={2}>
+      <View
+        style={styles.body}
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
+      >
+        <ThemedText style={styles.title} maxFontSizeMultiplier={1.8}>
           {recipe.title}
         </ThemedText>
 

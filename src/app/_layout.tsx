@@ -37,9 +37,13 @@ export default function RootLayout() {
                 title: t('recipes.title'),
                 headerRight: () => (
                   <View style={styles.headerActions}>
+                    {/* The bar has a fixed height, so these do not scale with
+                        Dynamic Type: at the largest sizes they were clipped
+                        mid-glyph. The labels above are what VoiceOver reads. */}
                     <Link
                       href="/more"
                       accessibilityLabel={t('more.title')}
+                      allowFontScaling={false}
                       style={styles.headerIcon}
                     >
                       ⋯
@@ -47,6 +51,7 @@ export default function RootLayout() {
                     <Link
                       href="/recipe/new"
                       accessibilityLabel={t('recipes.new')}
+                      allowFontScaling={false}
                       style={styles.headerIcon}
                     >
                       ＋

@@ -27,14 +27,14 @@ export function TextField({ label, error, multiline, style, ...rest }: Props) {
           {
             color: theme.text,
             backgroundColor: theme.backgroundElement,
-            borderColor: error ? '#C0392B' : 'transparent',
+            borderColor: error ? theme.danger : 'transparent',
           },
           style,
         ]}
         {...rest}
       />
       {error != null && (
-        <ThemedText type="small" style={styles.error}>
+        <ThemedText type="small" style={{ color: theme.danger }}>
           {error}
         </ThemedText>
       )}
@@ -57,8 +57,5 @@ const styles = StyleSheet.create({
   multiline: {
     minHeight: 120,
     textAlignVertical: 'top',
-  },
-  error: {
-    color: '#C0392B',
   },
 });
